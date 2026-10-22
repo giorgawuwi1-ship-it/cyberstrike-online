@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CyberStrike Online TDM</title>
+    <!-- PeerJS for P2P Networking -->
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <!-- Google Font for Cyberpunk Gaming Aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { box-sizing: border-box; font-family: 'Rajdhani', sans-serif; user-select: none; margin: 0; padding: 0; }
+        body, html { width: 100%; height: 100%; background: #070811; color: #fff; overflow: hidden; }
+        
+        /* Glassmorphism Screens */
+        .screen { position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .hidden { display: none !important; }
+
+        /* Modern Cyber Lobby */
+        #lobby { background: radial-gradient(circle at center, #12162d 0%, #05060c 100%); padding: 20px; }
+        
+        .header { 
+            position: absolute; top: 15px; left: 20px; right: 20px; 
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 1.3rem; font-weight: 700; 
+            background: rgba(15, 20, 38, 0.7); backdrop-filter: blur(12px);
+            padding: 12px 25px; border-radius: 12px; 
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0,240,255,0.15);
+        }
+        .coin-val { color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+        .lvl-val { color: #00f0ff; text-shadow: 0 0 10px rgba(0,240,255,0.5); }
+
+        .lobby-main { display: flex; gap: 25px; margin-top: 60px; width: 92%; max-width: 1100px; height: 78vh; }
+        
+        .panel { 
+            background: rgba(15, 20, 38, 0.75); backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 16px; 
+            padding: 22px; flex: 1; display: flex; flex-direction: column; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        
+        h2 { color: #00f0ff; text-transform: uppercase; letter-spacing: 2px; font-size: 1.4rem; margin-bottom: 15px; text-shadow: 0 0 8px rgba(0,240,255,0.4); }
+        
+        button { 
+            background: linear-gradient(135deg, #ff0055, #ff5500); border: none; color: white; 
+            padding: 12px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; 
+            font-size: 1.05rem; transition: all 0.25s ease; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(255,0,85,0.3);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,85,0,0.6); }
+        button:active { transform: translateY(0); }
+        button.btn-sec { 
+            background: linear-gradient(135deg, #0088ff, #00f0ff); color: #05060c; 
+            box-shadow: 0 4px 15px rgba(0,240,255,0.3);
+        }
+        button.btn-sec:hover { box-shadow: 0 6px 20px rgba(0,240,255,0.6); }
+
+        input, select { 
+            padding: 12px; background: rgba(10, 12, 24, 0.8); border: 1px solid rgba(0, 240, 255, 0.3); 
+            color: #fff; border-radius: 8px; margin-bottom: 12px; font-size: 1rem; outline: none;
+        }
+        input:focus, select:focus { border-color: #00f0ff; box-shadow: 0 0 10px rgba(0,240,255,0.3); }
+
+        /* Friends List */
+        .friend-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(22, 27, 50, 0.8); padding: 10px 14px; border-radius: 8px; 
+            margin-bottom: 8px; border-left: 4px solid #00f0ff; 
+        }
+
+        /* Weapon Shop Grid */
+        .weapon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; overflow-y: auto; height: 100%; padding-right: 6px; }
+        .weapon-card { 
+            background: rgba(20, 25, 48, 0.6); border: 1px solid rgba(255,255,255,0.1); 
+            padding: 14px; border-radius: 12px; text-align: center; position: relative; transition: 0.2s;
+        }
+        .weapon-card.unlocked { border-color: rgba(0, 240, 255, 0.4); background: rgba(20, 25, 48, 0.9); }
+        .weapon-card.equipped { border-color: #00ff88; background: rgba(0, 255, 136, 0.08); box-shadow: 0 0 15px rgba(0,255,136,0.2); }
+        .skin-btn { margin-top: 6px; font-size: 0.85rem; padding: 7px; width: 100%; }
+
+        /* Canvas Game & HUD */
+        #gameCanvas { width: 100%; height: 100%; display: block; }
+        
+        #hud { 
+            position: absolute; top: 15px; left: 20px; right: 20px; 
+            pointer-events: none; display: flex; justify-content: space-between; align-items: center; 
+        }
+        .hud-box { 
+            background: rgba(10, 12, 24, 0.75); backdrop-filter: blur(10px);
+            padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(0, 240, 255, 0.3); 
+            font-size: 1.2rem; font-weight: 700; text-shadow: 0 0 5px rgba(0,0,0,0.8);
+        }
+
+        /* Touch Controls for Mobile */
+        #touch-controls { position: absolute; bottom: 0; left: 0; right: 0; top: 0; pointer-events: none; display: none; }
+        .joystick { position: absolute; bottom: 35px; width: 120px; height: 120px; background: rgba(255,255,255,0.05); border: 2px solid rgba(0,240,255,0.4); border-radius: 50%; pointer-events: auto; }
+        #move-joy { left: 35px; }
+        #aim-joy { right: 35px; }
+        .weapon-switch-mobile { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; pointer-events: auto; }
+        .w-mob-btn { background: rgba(10, 12, 24, 0.85); border: 1px solid #00f0ff; padding: 10px 16px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <!-- LOBBY SCREEN -->
+    <div id="lobby" class="screen">
+        <div class="header">
+            <div>ID: <span id="player-id-display" style="color:#00f0ff;">იტვირთება...</span></div>
+            <div>LEVEL: <span id="lvl-display" class="lvl-val">1</span></div>
+            <div>COINS: <span id="coins-display" class="coin-val">0</span> 🪙</div>
+        </div>
+
+        <div class="lobby-main">
+            <!-- Left Panel: Matchmaking & Friends -->
+            <div class="panel">
+                <h2>🎮 მატჩის დაწყება</h2>
+                <label style="margin-bottom:5px; font-size:0.9rem; color:#aaa;">TDM რეჟიმი:</label>
+                <select id="mode-select">
+                    <option value="1v1">1 vs 1 TDM</option>
+                    <option value="2v2">2 vs 2 TDM</option>
+                    <option value="3v3">3 vs 3 TDM</option>
+                </select>
+
+                <button onclick="startMatchHost()" style="margin-top:5px;">ოთახის შექმნა (Host)</button>
+                
+                <hr style="border-color:rgba(0,240,255,0.15); margin: 20px 0;">
+
+                <h2>👥 მეგობრების სია</h2>
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="friend-id-input" placeholder="შეიყვანე მეგობრის ID" style="flex:1;">
+                    <button class="btn-sec" onclick="addFriend()">დამატება</button>
+                </div>
+                <div id="friends-list" style="margin-top:10px; overflow-y:auto; flex:1;"></div>
+            </div>
+
+            <!-- Right Panel: Loadout & Shop -->
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h2>🔫 იარაღები & სკინები (60 იარაღი)</h2>
+                </div>
+                <div id="weapon-shop-container" class="weapon-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME CANVAS SCREEN -->
+    <div id="game-screen" class="screen hidden">
+        <canvas id="gameCanvas"></canvas>
+        <div id="hud">
+            <div class="hud-box">❤️ HP: <span id="hp-val" style="color:#00ff88;">100</span></div>
+            <div class="hud-box">🔫 <span id="weapon-val" style="color:#00f0ff;">ავტომატი</span></div>
+            <div class="hud-box">🎯 KILLS: <span id="kills-val">0</span></div>
+        </div>
+
+        <!-- Touch Controls -->
+        <div id="touch-controls">
+            <div id="move-joy" class="joystick"></div>
+            <div id="aim-joy" class="joystick"></div>
+            <div class="weapon-switch-mobile">
+                <div class="w-mob-btn" onclick="switchWeaponSlot(1)">1: ავტომატი</div>
+                <div class="w-mob-btn" onclick="switchWeaponSlot(2)">2: პისტოლეტი/სნაიპერი</div>
+                <div class="w-mob-btn" onclick="switchWeaponSlot(3)">3: დანა</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 60 WEAPONS GENERATOR (3 WEAPONS PER LEVEL) ---
+        const WEAPONS = [];
+        for (let lvl = 1; lvl <= 20; lvl++) {
+            // Slot 1: Assault Rifle
+            WEAPONS.push({
+                id: (lvl - 1) * 3 + 1,
+                name: `Assault Rifle Mk-${lvl}`,
+                slot: 1, levelReq: lvl,
+                damage: 16 + lvl * 2, fireRate: 140, color: '#00f0ff',
+                skins: [
+                    { name: 'Neon Flame', price: 1800, color: '#ff0055' },
+                    { name: 'Gold Dragon', price: 3000, color: '#ffd700' }
+                ]
+            });
+            // Slot 2: Pistol or Sniper
+            WEAPONS.push({
+                id: (lvl - 1) * 3 + 2,
+                name: lvl % 2 === 0 ? `Sniper Hawk-${lvl}` : `Pistol Viper-${lvl}`,
+                slot: 2, levelReq: lvl,
+                damage: lvl % 2 === 0 ? 65 + lvl * 3 : 28 + lvl * 2,
+                fireRate: lvl % 2 === 0 ? 800 : 280, color: '#ff5500',
+                skins: [
+                    { name: 'Cyber Blue', price: 1800, color: '#0088ff' },
+                    { name: 'Void Purple', price: 3000, color: '#aa00ff' }
+                ]
+            });
+            // Slot 3: Knife
+            WEAPONS.push({
+                id: (lvl - 1) * 3 + 3,
+                name: `Combat Knife V${lvl}`,
+                slot: 3, levelReq: lvl,
+                damage: 45 + lvl * 4, fireRate: 350, color: '#e0e0e0',
+                skins: [
+                    { name: 'Red Ruby', price: 1800, color: '#ff0000' },
+                    { name: 'Emerald Blade', price: 3000, color: '#00ff66' }
+                ]
+            });
+        }
+
+        // --- LOCAL STORAGE DATA ---
+        let player = JSON.parse(localStorage.getItem('cs_player_data')) || {
+            coins: 500, level: 1, xp: 0,
+            equipped: { 1: 1, 2: 2, 3: 3 },
+            equippedSkins: { 1: -1, 2: -1, 3: -1 },
+            unlockedSkins: [], friends: []
+        };
+
+        function savePlayerData() {
+            localStorage.setItem('cs_player_data', JSON.stringify(player));
+            updateLobbyUI();
+        }
+
+        // --- NETWORKING (PEERJS) ---
+        let peer = new Peer();
+        let myId = '';
+        let conn = null;
+
+        peer.on('open', id => {
+            myId = id;
+            document.getElementById('player-id-display').innerText = id;
+        });
+
+        peer.on('connection', c => {
+            conn = c;
+            setupNetworkListeners();
+            initGame(false);
+        });
+
+        function addFriend() {
+            const fId = document.getElementById('friend-id-input').value.trim();
+            if (fId && !player.friends.includes(fId)) {
+                player.friends.push(fId);
+                savePlayerData();
+                document.getElementById('friend-id-input').value = '';
+            }
+        }
+
+        function startMatchHost() { initGame(true); }
+
+        function connectToFriend(fId) {
+            conn = peer.connect(fId);
+            setupNetworkListeners();
+            initGame(false);
+        }
+
+        function setupNetworkListeners() {
+            conn.on('data', data => {
+                if (data.type === 'GAME_STATE') {
+                    remotePlayer = data.player;
+                    remoteBullets = data.bullets;
+                }
+            });
+        }
+
+        // --- LOBBY UI RENDER ---
+        function updateLobbyUI() {
+            document.getElementById('coins-display').innerText = player.coins;
+            document.getElementById('lvl-display').innerText = player.level;
+
+            // Friends
+            const fList = document.getElementById('friends-list');
+            fList.innerHTML = '';
+            player.friends.forEach(fId => {
+                fList.innerHTML += `
+                    <div class="friend-item">
+                        <span>${fId.substring(0, 10)}...</span>
+                        <button class="btn-sec" style="padding:4px 10px; font-size:0.8rem;" onclick="connectToFriend('${fId}')">შერთება</button>
+                    </div>`;
+            });
+
+            // Weapons
+            const shop = document.getElementById('weapon-shop-container');
+            shop.innerHTML = '';
+            WEAPONS.forEach(w => {
+                const unlocked = player.level >= w.levelReq;
+                const isEquipped = player.equipped[w.slot] === w.id;
+                
+                let skinsHTML = '';
+                if (unlocked) {
+                    w.skins.forEach((s, idx) => {
+                        const skinKey = `${w.id}_${idx}`;
+                        const hasSkin = player.unlockedSkins.includes(skinKey);
+                        const isSkinEquipped = player.equippedSkins[w.slot] === idx && isEquipped;
+
+                        skinsHTML += `
+                            <button class="skin-btn ${isSkinEquipped ? 'btn-sec' : ''}" onclick="handleSkinAction(${w.id}, ${w.slot}, ${idx}, ${s.price})">
+                                ${hasSkin ? (isSkinEquipped ? '✓ არჩეულია' : `სკინი: \${s.name}`) : `ყიდვა: \\({s.name} (\\){s.price}🪙)`}
+                            </button>`;
+                    });
+                }
+
+                shop.innerHTML += `
+                    <div class="weapon-card ${unlocked ? 'unlocked' : ''} ${isEquipped ? 'equipped' : ''}">
+                        <div style="font-weight:700; color:${w.color}; font-size:1.05rem;">${w.name}</div>
+                        <div style="font-size:0.85rem; margin:4px 0; color:#aaa;">Damage: ${w.damage} | Lvl: ${w.levelReq}</div>
+                        ${unlocked ? `<button onclick="equipWeapon(\${w.id}, \\({w.slot})" style="width:100%; padding:6px; font-size:0.85rem; margin-top:4px;">\\){isEquipped ? 'არჩეულია' : 'დაყენება'}</button>` : '<div style="color:#ff0055; font-size:0.85rem; font-weight:bold; margin-top:6px;">🔒 ჩაკეტილია</div>'}
+                        ${skinsHTML}
+                    </div>`;
+            });
+        }
+
+        function equipWeapon(wId, slot) {
+            player.equipped[slot] = wId;
+            player.equippedSkins[slot] = -1;
+            savePlayerData();
+        }
+
+        function handleSkinAction(wId, slot, skinIdx, price) {
+            const skinKey = `${wId}_${skinIdx}`;
+            if (!player.unlockedSkins.includes(skinKey)) {
+                if (player.coins >= price) {
+                    player.coins -= price;
+                    player.unlockedSkins.push(skinKey);
+                } else {
+                    return alert('არ გაქვთ საკმარისი ქოინები!');
+                }
+            }
+            player.equipped[slot] = wId;
+            player.equippedSkins[slot] = skinIdx;
+            savePlayerData();
+        }
+
+        // --- GAMEPLAY ENGINE ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let isTouch = 'ontouchstart' in window;
+        let activeSlot = 1;
+        let kills = 0;
+
+        let localPlayer = { x: 200, y: 300, hp: 100, angle: 0 };
+        let remotePlayer = { x: 600, y: 300, hp: 100, angle: 0 };
+        let localBullets = [];
+        let remoteBullets = [];
+
+        let keys = {};
+        let mouse = { x: 0, y: 0 };
+
+        function initGame(isHost) {
+            document.getElementById('lobby').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            if (isTouch) document.getElementById('touch-controls').style.display = 'block';
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            localPlayer.x = isHost ? 200 : canvas.width - 200;
+            localPlayer.y = canvas.height / 2;
+
+            window.addEventListener('keydown', e => {
+                keys[e.key.toLowerCase()] = true;
+                if (e.key === '1') switchWeaponSlot(1);
+                if (e.key === '2') switchWeaponSlot(2);
+                if (e.key === '3') switchWeaponSlot(3);
+            });
+            window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+            window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+            window.addEventListener('mousedown', shoot);
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function switchWeaponSlot(slot) {
+            activeSlot = slot;
+            const currentW = WEAPONS.find(w => w.id === player.equipped[activeSlot]);
+            document.getElementById('weapon-val').innerText = currentW ? currentW.name : 'იარაღი';
+        }
+
+        function shoot() {
+            const currentW = WEAPONS.find(w => w.id === player.equipped[activeSlot]);
+            if (!currentW) return;
+
+            const skinIdx = player.equippedSkins[activeSlot];
+            const bulletColor = skinIdx >= 0 ? currentW.skins[skinIdx].color : currentW.color;
+
+            localBullets.push({
+                x: localPlayer.x, y: localPlayer.y,
+                vx: Math.cos(localPlayer.angle) * 14,
+                vy: Math.sin(localPlayer.angle) * 14,
+                damage: currentW.damage,
+                color: bulletColor
+            });
+        }
+
+        function gameLoop() {
+            // Movement
+            let speed = activeSlot === 3 ? 5.2 : 3.8;
+            if (keys['w'] || keys['წ']) localPlayer.y -= speed;
+            if (keys['s'] || keys['shared']) localPlayer.y += speed;
+            if (keys['a'] || keys['a']) localPlayer.x -= speed;
+            if (keys['d'] || keys['d']) localPlayer.x += speed;
+
+            localPlayer.angle = Math.atan2(mouse.y - localPlayer.y, mouse.x - localPlayer.x);
+
+            // Bullet updates & collision
+            localBullets.forEach((b, idx) => {
+                b.x += b.vx;
+                b.y += b.vy;
+
+                let dist = Math.hypot(b.x - remotePlayer.x, b.y - remotePlayer.y);
+                if (dist < 22) {
+                    remotePlayer.hp -= b.damage;
+                    localBullets.splice(idx, 1);
+                    if (remotePlayer.hp <= 0) {
+                        kills++;
+                        document.getElementById('kills-val').innerText = kills;
+                        endGame(true);
+                    }
+                }
+            });
+
+            // Network Sync
+            if (conn) {
+                conn.send({
+                    type: 'GAME_STATE',
+                    player: { x: localPlayer.x, y: localPlayer.y, hp: localPlayer.hp, angle: localPlayer.angle },
+                    bullets: localBullets
+                });
+            }
+
+            // Draw Background Grid
+            ctx.fillStyle = '#0a0d1a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'rgba(0, 240, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 40) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            // Draw Players & Bullets
+            drawPlayer(localPlayer, getActiveColor(), true);
+            drawPlayer(remotePlayer, '#ff0055', false);
+
+            localBullets.concat(remoteBullets).forEach(b => {
+                ctx.fillStyle = b.color || '#ffff00';
+                ctx.shadowColor = b.color || '#ffff00';
+                ctx.shadowBlur = 8;
+                ctx.beginPath(); ctx.arc(b.x, b.y, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+
+            document.getElementById('hp-val').innerText = Math.max(0, localPlayer.hp);
+
+            if (localPlayer.hp > 0) requestAnimationFrame(gameLoop);
+        }
+
+        function getActiveColor() {
+            const currentW = WEAPONS.find(w => w.id === player.equipped[activeSlot]);
+            if (!currentW) return '#00f0ff';
+            const skinIdx = player.equippedSkins[activeSlot];
+            return skinIdx >= 0 ? currentW.skins[skinIdx].color : currentW.color;
+        }
+
+        function drawPlayer(p, skinColor, isSelf) {
+            ctx.save();
+            ctx.translate(p.x, p.y);
+
+            // Health Bar above player
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(-20, -32, 40, 6);
+            ctx.fillStyle = isSelf ? '#00ff88' : '#ff0055';
+            ctx.fillRect(-20, -32, (Math.max(0, p.hp) / 100) * 40, 6);
+
+            ctx.rotate(p.angle);
+
+            // Gun Barrel
+            ctx.fillStyle = skinColor;
+            ctx.fillRect(10, 4, 16, 6);
+
+            // Body
+            ctx.beginPath();
+            ctx.arc(0, 0, 18, 0, Math.PI * 2);
+            ctx.fillStyle = isSelf ? '#00f0ff' : '#ff0055';
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = skinColor; // Equipped Skin Glow
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function endGame(won) {
+            // EXACT REWARD FORMULA:
+            // Level 1 Win = 100 Coins, Level 2 Win = 110 Coins (+10 Coins per level)
+            const baseWinReward = won ? (100 + (player.level - 1) * 10) : 0;
+            const killBonus = kills * 5;
+            const totalEarned = baseWinReward + killBonus;
+
+            player.coins += totalEarned;
+            player.xp += 60;
+
+            let levelUpMsg = '';
+            if (player.xp >= player.level * 100) {
+                player.level++;
+                player.xp = 0;
+                levelUpMsg = `\n🎉 გილოცავთ! გადახვედით ${player.level} ლეველზე და გაგეხსნათ 3 ახალი იარაღი!`;
+            }
+
+            savePlayerData();
+            alert(`${won ? '🏆 მოგება!' : '☠️ წაგება!'}\n\nმიღებული ქოინები: +${totalEarned} 🪙 (მოგება: ${baseWinReward} + ქილები: ${killBonus})${levelUpMsg}`);
+            location.reload();
+        }
+
+        // Initialize Lobby on Load
+        updateLobbyUI();
+    </script>
+</body>
+</html>
