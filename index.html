@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CyberStrike 3D - Mobile Landscape TDM</title>
+    <title>CyberStrike 3D - CS:GO Edition</title>
     <!-- PeerJS for Multiplayer -->
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <!-- Three.js for 3D Graphics -->
@@ -38,7 +38,7 @@
             position: absolute; top: 12px; left: 15px; right: 15px; 
             display: flex; justify-content: space-between; align-items: center;
             font-size: 1.1rem; font-weight: 700; 
-            background: rgba(10, 15, 30, 0.65); backdrop-filter: blur(16px);
+            background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(16px);
             padding: 8px 20px; border-radius: 12px; 
             border: 1px solid rgba(0, 240, 255, 0.4);
             box-shadow: 0 0 25px rgba(0,240,255,0.2);
@@ -54,7 +54,7 @@
         .lobby-main { display: flex; gap: 15px; margin-top: 50px; width: 96%; max-width: 1200px; height: 80vh; }
         
         .panel { 
-            background: rgba(12, 18, 36, 0.6); backdrop-filter: blur(20px);
+            background: rgba(12, 18, 36, 0.65); backdrop-filter: blur(20px);
             border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 16px; 
             padding: 16px; flex: 1; display: flex; flex-direction: column; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
@@ -105,37 +105,37 @@
 
         /* HUD Overlay */
         #hud { position: absolute; top: 10px; left: 15px; right: 15px; pointer-events: none; display: flex; justify-content: space-between; z-index: 10; }
-        .hud-box { background: rgba(10, 12, 24, 0.75); backdrop-filter: blur(10px); padding: 6px 14px; border-radius: 10px; border: 1px solid rgba(0, 240, 255, 0.35); font-size: 1rem; font-weight: 700; }
+        .hud-box { background: rgba(10, 12, 24, 0.8); backdrop-filter: blur(10px); padding: 6px 14px; border-radius: 10px; border: 1px solid rgba(0, 240, 255, 0.35); font-size: 0.9rem; font-weight: 700; }
 
         .cam-btn {
             background: rgba(0, 240, 255, 0.25); border: 1px solid #00f0ff; color: #fff;
             padding: 4px 10px; border-radius: 6px; font-weight: bold; cursor: pointer; pointer-events: auto;
         }
 
-        /* ROUND TOUCH JOYSTICK FOR MOBILE */
+        /* TOUCH CONTROLS FOR MOBILE */
         #touch-controls { position: absolute; bottom: 0; left: 0; right: 0; top: 0; pointer-events: none; display: none; z-index: 10; }
         
         .joystick-container { 
-            position: absolute; bottom: 25px; left: 35px; width: 120px; height: 120px; 
+            position: absolute; bottom: 25px; left: 35px; width: 110px; height: 110px; 
             background: rgba(0, 240, 255, 0.08); border: 2px solid rgba(0, 240, 255, 0.4); 
             border-radius: 50%; pointer-events: auto; touch-action: none; display: flex; 
             align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(0,240,255,0.2);
         }
         .joystick-knob { 
-            width: 50px; height: 50px; background: radial-gradient(circle, #00f0ff 0%, #0088ff 100%); 
+            width: 45px; height: 45px; background: radial-gradient(circle, #00f0ff 0%, #0088ff 100%); 
             border-radius: 50%; box-shadow: 0 0 15px rgba(0,240,255,0.8); pointer-events: none; 
             transition: transform 0.05s ease-out;
         }
 
-        .mobile-action-btns { position: absolute; bottom: 30px; right: 35px; display: flex; flex-direction: column; gap: 10px; pointer-events: auto; }
+        .mobile-action-btns { position: absolute; bottom: 25px; right: 25px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; pointer-events: auto; }
         .mob-action-btn { 
-            width: 55px; height: 55px; background: rgba(10, 15, 30, 0.85); border: 2px solid #00f0ff; 
-            border-radius: 50%; color: #fff; font-size: 1.1rem; font-weight: bold; display: flex; 
+            width: 52px; height: 52px; background: rgba(10, 15, 30, 0.85); border: 2px solid #00f0ff; 
+            border-radius: 50%; color: #fff; font-size: 1rem; font-weight: bold; display: flex; 
             flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(0,240,255,0.4); cursor: pointer;
         }
 
         .weapon-switch-mobile { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; pointer-events: auto; }
-        .w-mob-btn { background: rgba(10, 12, 24, 0.85); border: 1px solid #00f0ff; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; }
+        .w-mob-btn { background: rgba(10, 12, 24, 0.85); border: 1px solid #00f0ff; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -163,7 +163,7 @@
         <div class="lobby-main">
             <!-- Left Panel -->
             <div class="panel">
-                <h2 id="txt-matchmaking">🎮 3D TDM მატჩი (5 წუთი / 40 Kills)</h2>
+                <h2 id="txt-matchmaking">🎮 CS:GO TDM MATCH (5 Mins / 40 Kills)</h2>
                 
                 <div class="mode-selector">
                     <div class="mode-btn active" onclick="selectMode('1v1')" id="m1">1 VS 1</div>
@@ -201,11 +201,12 @@
             <div class="hud-box">
                 <button class="cam-btn" onclick="toggleCameraView()">🎥 VIEW: <span id="cam-mode-val">TPP (V)</span></button>
             </div>
-            <div class="hud-box">🔫 <span id="weapon-val" style="color:#00f0ff;">3D იარაღი</span></div>
+            <div class="hud-box" style="font-size:0.75rem; color:#aaa;">W,S,A,D: Move | SPACE: Jump | C: Crouch | G: Nade | X: Smoke</div>
+            <div class="hud-box">🔫 <span id="weapon-val" style="color:#00f0ff;">CS:GO Weapon</span></div>
             <div class="hud-box">🎯 KILLS: <span id="kills-val">0</span> / 40</div>
         </div>
 
-        <!-- Mobile Controls with Round Touch Joystick -->
+        <!-- Mobile Controls with Touch Joystick & Grenade Buttons -->
         <div id="touch-controls">
             <!-- Round Touch Analog Joystick -->
             <div id="move-joy" class="joystick-container">
@@ -216,17 +217,25 @@
             <div class="mobile-action-btns">
                 <div class="mob-action-btn" onclick="triggerMobileJump()">
                     <span>⬆️</span>
-                    <span style="font-size:0.6rem;">JUMP</span>
+                    <span style="font-size:0.55rem;">JUMP</span>
                 </div>
                 <div class="mob-action-btn" onclick="toggleMobileCrouch()">
                     <span>⬇️</span>
-                    <span style="font-size:0.6rem;">CROUCH</span>
+                    <span style="font-size:0.55rem;">CROUCH</span>
+                </div>
+                <div class="mob-action-btn" onclick="throwGrenade('HE')">
+                    <span>💣</span>
+                    <span style="font-size:0.55rem;">NADE</span>
+                </div>
+                <div class="mob-action-btn" onclick="throwGrenade('SMOKE')">
+                    <span>💨</span>
+                    <span style="font-size:0.55rem;">SMOKE</span>
                 </div>
             </div>
 
             <div class="weapon-switch-mobile">
-                <div class="w-mob-btn" onclick="switchWeaponSlot(1)">1: Auto</div>
-                <div class="w-mob-btn" onclick="switchWeaponSlot(2)">2: Pistol/Sniper</div>
+                <div class="w-mob-btn" onclick="switchWeaponSlot(1)">1: Rifle</div>
+                <div class="w-mob-btn" onclick="switchWeaponSlot(2)">2: Pistol/AWP</div>
                 <div class="w-mob-btn" onclick="switchWeaponSlot(3)">3: Knife</div>
             </div>
         </div>
@@ -236,8 +245,8 @@
         // --- TRANSLATIONS ---
         let currentLang = 'GE';
         const TRANSLATIONS = {
-            GE: { matchmaking: '🎮 3D TDM მატჩი (5 წუთი / 40 Kills)', host: '🌐 ოთახის შექმნა (Online)', bot: '🤖 3D ბოტებთან თამაში', friends: '👥 მეგობრების სია', add: 'დამატება', shop: '🔫 3D იარაღები & სკინები', equip: 'დაყენება', equipped: '✓ არჩეულია', locked: '🔒 ჩაკეტილია', buy: 'ყიდვა' },
-            EN: { matchmaking: '🎮 3D TDM MATCH (5 Mins / 40 Kills)', host: '🌐 CREATE ROOM (Online)', bot: '🤖 PLAY VS 3D BOTS', friends: '👥 FRIENDS LIST', add: 'ADD', shop: '🔫 3D WEAPONS & SKINS', equip: 'EQUIP', equipped: '✓ EQUIPPED', locked: 'LOCKED', buy: 'BUY' }
+            GE: { matchmaking: '🎮 CS:GO TDM MATCH (5 Mins / 40 Kills)', host: '🌐 ოთახის შექმნა (Online)', bot: '🤖 3D ბოტებთან თამაში', friends: '👥 მეგობრების სია', add: 'დამატება', shop: '🔫 3D იარაღები & სკინები', equip: 'დაყენება', equipped: '✓ არჩეულია', locked: '🔒 ჩაკეტილია', buy: 'ყიდვა' },
+            EN: { matchmaking: '🎮 CS:GO TDM MATCH (5 Mins / 40 Kills)', host: '🌐 CREATE ROOM (Online)', bot: '🤖 PLAY VS 3D BOTS', friends: '👥 FRIENDS LIST', add: 'ADD', shop: '🔫 3D WEAPONS & SKINS', equip: 'EQUIP', equipped: '✓ EQUIPPED', locked: 'LOCKED', buy: 'BUY' }
         };
 
         function toggleLanguage() {
@@ -256,9 +265,9 @@
         // --- 60 WEAPONS DATA ---
         const WEAPONS = [];
         for (let lvl = 1; lvl <= 20; lvl++) {
-            WEAPONS.push({ id: (lvl - 1) * 3 + 1, name: `AK-47 / M4 Mk-${lvl}`, slot: 1, levelReq: lvl, damage: 16 + lvl * 2, color: '#00f0ff', skins: [{ name: 'Neon Flame', price: 1800, color: '#ff0055' }, { name: 'Gold Dragon', price: 3000, color: '#ffd700' }] });
-            WEAPONS.push({ id: (lvl - 1) * 3 + 2, name: lvl % 2 === 0 ? `AWP Sniper Hawk-${lvl}` : `Desert Eagle Viper-${lvl}`, slot: 2, levelReq: lvl, damage: lvl % 2 === 0 ? 65 + lvl * 3 : 28 + lvl * 2, color: '#ff5500', skins: [{ name: 'Cyber Blue', price: 1800, color: '#0088ff' }, { name: 'Void Purple', price: 3000, color: '#aa00ff' }] });
-            WEAPONS.push({ id: (lvl - 1) * 3 + 3, name: `Combat Knife V${lvl}`, slot: 3, levelReq: lvl, damage: 45 + lvl * 4, color: '#e0e0e0', skins: [{ name: 'Red Ruby', price: 1800, color: '#ff0000' }, { name: 'Emerald Blade', price: 3000, color: '#00ff66' }] });
+            WEAPONS.push({ id: (lvl - 1) * 3 + 1, name: `AK-47 / M4A4 Mk-${lvl}`, slot: 1, levelReq: lvl, damage: 18 + lvl * 2, color: '#00f0ff', skins: [{ name: 'Neon Flame', price: 1800, color: '#ff0055' }, { name: 'Dragon Lore', price: 3000, color: '#ffd700' }] });
+            WEAPONS.push({ id: (lvl - 1) * 3 + 2, name: lvl % 2 === 0 ? `AWP Sniper Hawk-${lvl}` : `Desert Eagle Viper-${lvl}`, slot: 2, levelReq: lvl, damage: lvl % 2 === 0 ? 70 + lvl * 3 : 30 + lvl * 2, color: '#ff5500', skins: [{ name: 'Asiimov Blue', price: 1800, color: '#0088ff' }, { name: 'Hyper Beast', price: 3000, color: '#aa00ff' }] });
+            WEAPONS.push({ id: (lvl - 1) * 3 + 3, name: `Karambit Knife V${lvl}`, slot: 3, levelReq: lvl, damage: 50 + lvl * 4, color: '#e0e0e0', skins: [{ name: 'Crimson Web', price: 1800, color: '#ff0000' }, { name: 'Doppler Phase', price: 3000, color: '#00ff66' }] });
         }
 
         let selectedMode = '1v1';
@@ -284,7 +293,7 @@
             if (gameState === 'LOBBY') update3DHangarWeapon();
         }
 
-        // --- PEERJS ---
+        // --- PEERJS MULTIPLAYER ---
         let peer = new Peer();
         let conn = null;
         peer.on('open', id => document.getElementById('player-id-display').innerText = id);
@@ -303,7 +312,6 @@
             conn.on('data', data => {
                 if (data.type === 'GAME_STATE') {
                     remotePlayerState = data.player;
-                    remoteBulletsData = data.bullets;
                 }
             });
         }
@@ -363,7 +371,7 @@
         }
 
         // =========================================================
-        // --- 3D ENGINE, TOUCH JOYSTICK & GAMEPLAY LOGIC ---
+        // --- THREE.JS ENGINE, CS:GO GRAFFITI WALLS, GRENADES ---
         // =========================================================
         let scene, camera, renderer;
         let gameState = 'LOBBY';
@@ -371,6 +379,7 @@
 
         let localMesh, remoteMesh;
         let localBullets3D = [], remoteBullets3D = [];
+        let activeGrenades = [], activeEffects = [];
         let activeSlot = 1, kills = 0, isBotMatch = false;
 
         let matchTimer = 300;
@@ -380,7 +389,6 @@
         let cameraMode = 'TPP';
         let isTouch = 'ontouchstart' in window;
 
-        // Touch Joystick Variables
         let joyDir = { forward: 0, right: 0 };
 
         let localState = { 
@@ -408,7 +416,6 @@
             localState.isCrouching = !localState.isCrouching;
         }
 
-        // SETUP ROUND TOUCH JOYSTICK LISTENERS
         function setupJoystick() {
             const joyContainer = document.getElementById('move-joy');
             const joyKnob = document.getElementById('joy-knob');
@@ -416,7 +423,7 @@
             let startX = 0, startY = 0;
 
             joyContainer.addEventListener('touchstart', e => {
-                const touch = e.changedTouches[0];
+                const touch = e.changedTouches;
                 joyTouchId = touch.identifier;
                 const rect = joyContainer.getBoundingClientRect();
                 startX = rect.left + rect.width / 2;
@@ -430,7 +437,7 @@
                         let dx = touch.clientX - startX;
                         let dy = touch.clientY - startY;
                         let dist = Math.hypot(dx, dy);
-                        let maxRadius = 40;
+                        let maxRadius = 38;
 
                         if (dist > maxRadius) {
                             dx = (dx / dist) * maxRadius;
@@ -438,7 +445,6 @@
                         }
 
                         joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-
                         joyDir.right = dx / maxRadius;
                         joyDir.forward = -dy / maxRadius;
                     }
@@ -464,15 +470,15 @@
             const canvas = document.getElementById('canvas3D');
             
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x070a14);
-            scene.fog = new THREE.FogExp2(0x070a14, 0.012);
+            scene.background = new THREE.Color(0x0a0d18);
+            scene.fog = new THREE.FogExp2(0x0a0d18, 0.011);
 
             camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMap.enabled = true;
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
             scene.add(ambientLight);
 
             const dirLight = new THREE.DirectionalLight(0x00f0ff, 1.2);
@@ -504,11 +510,11 @@
             hangarPedestal.position.set(0, 0.3, 0);
             scene.add(hangarPedestal);
 
-            hangarCharacterGroup = createDetailed3DCharacter(getActiveColor(), true, 0x2d5a27);
+            hangarCharacterGroup = createCSGOSoldierMesh('CT', getActiveColor());
             hangarCharacterGroup.position.set(0, 0.6, 0);
             scene.add(hangarCharacterGroup);
 
-            hangarWeaponMesh = createDetailed3DWeapon(getActiveColor());
+            hangarWeaponMesh = createCSGOWeaponMesh('AK-47', getActiveColor());
             hangarWeaponMesh.position.set(0, 4.2, 0);
             hangarWeaponMesh.scale.set(1.5, 1.5, 1.5);
             scene.add(hangarWeaponMesh);
@@ -539,10 +545,10 @@
             scene.remove(hangarCharacterGroup);
             scene.remove(hangarWeaponMesh);
 
-            createRealistic3DTDMArena();
+            createCSGOTDMArena();
 
-            localMesh = createDetailed3DCharacter(getActiveColor(), true, 0x2d5a27); // Green Team
-            remoteMesh = createDetailed3DCharacter('#ff0055', false, 0x4a505a);     // Grey Team
+            localMesh = createCSGOSoldierMesh('CT', getActiveColor()); // Counter-Terrorist
+            remoteMesh = createCSGOSoldierMesh('T', '#ff5500');         // Terrorist
             
             scene.add(localMesh);
             scene.add(remoteMesh);
@@ -566,6 +572,7 @@
                 }
             }, 1000);
 
+            // KEYBOARD INPUT LISTENERS (W, S, A, D, SPACE, C, G, X, V)
             window.addEventListener('keydown', e => {
                 const k = e.key.toLowerCase();
                 keys[k] = true;
@@ -573,6 +580,8 @@
                 if (k === '1') switchWeaponSlot(1);
                 if (k === '2') switchWeaponSlot(2);
                 if (k === '3') switchWeaponSlot(3);
+                if (k === 'g' || k === 'გ') throwGrenade('HE');
+                if (k === 'x' || k === 'ხ') throwGrenade('SMOKE');
                 if (k === 'v' || k === 'ვ') toggleCameraView();
             });
             window.addEventListener('keyup', e => {
@@ -586,9 +595,43 @@
             window.addEventListener('mousedown', shoot3D);
         }
 
-        function createRealistic3DTDMArena() {
+        // --- PROCEDURAL CS:GO GRAFFITI WALL TEXTURE ---
+        function createCSGOWallTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512; canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#2b2d35'; ctx.fillRect(0, 0, 512, 512);
+            
+            for(let i=0; i<400; i++) {
+                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.05)';
+                ctx.fillRect(Math.random()*512, Math.random()*512, Math.random()*50+10, Math.random()*50+10);
+            }
+
+            ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 2;
+            for(let y=0; y<512; y+=32) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
+            }
+
+            ctx.font = 'bold 42px Rajdhani, sans-serif';
+            ctx.fillStyle = '#ff0055'; ctx.fillText('CS:GO ARENA', 30, 110);
+            ctx.fillStyle = '#00f0ff'; ctx.fillText('NO EXIT', 310, 260);
+            ctx.fillStyle = '#ffd700'; ctx.font = 'bold 36px Rajdhani, sans-serif';
+            ctx.fillText('RUSH B!', 80, 410);
+
+            ctx.fillStyle = '#ff0055';
+            ctx.beginPath(); ctx.arc(110, 140, 12, 0, Math.PI*2); ctx.fill();
+            ctx.fillRect(108, 140, 4, 35);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(6, 1);
+            return texture;
+        }
+
+        function createCSGOTDMArena() {
             const floorGeo = new THREE.PlaneGeometry(120, 120);
-            const floorMat = new THREE.MeshStandardMaterial({ color: 0x1b202e, roughness: 0.9, metalness: 0.1 });
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x181c28, roughness: 0.9, metalness: 0.1 });
             const floor = new THREE.Mesh(floorGeo, floorMat);
             floor.rotation.x = -Math.PI / 2;
             floor.receiveShadow = true;
@@ -597,6 +640,22 @@
             const grid = new THREE.GridHelper(120, 60, 0x00f0ff, 0x1f264d);
             grid.position.y = 0.01;
             scene.add(grid);
+
+            // PAINTED GRAFFITI PERIMETER WALLS (N, S, W, E)
+            const wallTex = createCSGOWallTexture();
+            const wallMat = new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.8, metalness: 0.2 });
+
+            const nWall = new THREE.Mesh(new THREE.BoxGeometry(120, 12, 2), wallMat);
+            nWall.position.set(0, 6, -60); scene.add(nWall);
+
+            const sWall = new THREE.Mesh(new THREE.BoxGeometry(120, 12, 2), wallMat);
+            sWall.position.set(0, 6, 60); scene.add(sWall);
+
+            const wWall = new THREE.Mesh(new THREE.BoxGeometry(2, 12, 120), wallMat);
+            wWall.position.set(-60, 6, 0); scene.add(wWall);
+
+            const eWall = new THREE.Mesh(new THREE.BoxGeometry(2, 12, 120), wallMat);
+            eWall.position.set(60, 6, 0); scene.add(eWall);
 
             function addContainer(x, z, rotY, colorHex) {
                 const group = new THREE.Group();
@@ -611,70 +670,148 @@
                 scene.add(group);
             }
 
-            addContainer(-12, -15, 0, 0x992222);
-            addContainer(12, 15, 0, 0x225599);
-            addContainer(0, -25, Math.PI / 2, 0x444444);
-            addContainer(0, 25, Math.PI / 2, 0x336644);
-            addContainer(-25, 5, Math.PI / 4, 0x992222);
-            addContainer(25, -5, Math.PI / 4, 0x225599);
+            // TDM Containers
+            addContainer(-12, -15, 0, 0x882222);
+            addContainer(12, 15, 0, 0x224488);
+            addContainer(0, -25, Math.PI / 2, 0x333333);
+            addContainer(0, 25, Math.PI / 2, 0x225533);
+            addContainer(-25, 5, Math.PI / 4, 0x882222);
+            addContainer(25, -5, Math.PI / 4, 0x224488);
         }
 
-        function createDetailed3DCharacter(skinColorHex, isSelf, uniformColorHex) {
+        // --- CS:GO SOLDIER MESH ---
+        function createCSGOSoldierMesh(teamType, skinColorHex) {
             const group = new THREE.Group();
+            const mainColor = teamType === 'CT' ? 0x1b2845 : 0x3d3522;
+            const vestColor = 0x11141a;
 
-            const legMat = new THREE.MeshStandardMaterial({ color: uniformColorHex, roughness: 0.7 });
-            const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.22, 1.4, 10), legMat);
+            const legMat = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.7 });
+            const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.22, 1.4, 10), legMat);
             leftLeg.position.set(-0.35, 0.7, 0); group.add(leftLeg);
 
-            const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.22, 1.4, 10), legMat);
+            const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.22, 1.4, 10), legMat);
             rightLeg.position.set(0.35, 0.7, 0); group.add(rightLeg);
 
+            const bootMat = new THREE.MeshStandardMaterial({ color: 0x08080a, roughness: 0.4 });
+            const bootL = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.5), bootMat);
+            bootL.position.set(-0.35, 0.15, 0.1); group.add(bootL);
+            const bootR = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.5), bootMat);
+            bootR.position.set(0.35, 0.15, 0.1); group.add(bootR);
+
             const bodyGeo = new THREE.BoxGeometry(1.3, 1.5, 0.8);
-            const bodyMat = new THREE.MeshStandardMaterial({ color: uniformColorHex, roughness: 0.5 });
+            const bodyMat = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.5 });
             const body = new THREE.Mesh(bodyGeo, bodyMat);
             body.position.y = 2.1; body.castShadow = true; group.add(body);
 
-            const vestGeo = new THREE.BoxGeometry(1.4, 1.1, 0.9);
-            const vestMat = new THREE.MeshStandardMaterial({ color: 0x11141a, roughness: 0.4 });
+            const vestGeo = new THREE.BoxGeometry(1.4, 1.15, 0.9);
+            const vestMat = new THREE.MeshStandardMaterial({ color: vestColor, roughness: 0.4 });
             const vest = new THREE.Mesh(vestGeo, vestMat);
             vest.position.y = 2.1; group.add(vest);
 
             const headGeo = new THREE.SphereGeometry(0.42, 16, 16);
-            const headMat = new THREE.MeshStandardMaterial({ color: 0xdbb38c });
+            const headMat = new THREE.MeshStandardMaterial({ color: 0x151820 });
             const head = new THREE.Mesh(headGeo, headMat);
             head.position.y = 3.1; group.add(head);
 
-            const helmetGeo = new THREE.SphereGeometry(0.48, 16, 16, 0, Math.PI * 2, 0, Math.PI / 1.8);
-            const helmetMat = new THREE.MeshStandardMaterial({ color: uniformColorHex, roughness: 0.3 });
+            const helmetGeo = new THREE.SphereGeometry(0.48, 16, 16, 0, Math.PI * 2, 0, Math.PI / 1.7);
+            const helmetMat = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.3, metalness: 0.2 });
             const helmet = new THREE.Mesh(helmetGeo, helmetMat);
             helmet.position.y = 3.15; group.add(helmet);
 
-            const gunMesh = createDetailed3DWeapon(skinColorHex);
-            gunMesh.position.set(0.6, 2.3, 0.7);
-            group.add(gunMesh);
+            const goggleGeo = new THREE.BoxGeometry(0.6, 0.2, 0.2);
+            const goggleMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, roughness: 0.1, metalness: 0.9, emissive: 0x00f0ff, emissiveIntensity: 0.2 });
+            const goggles = new THREE.Mesh(goggleGeo, goggleMat);
+            goggles.position.set(0, 3.15, 0.38); group.add(goggles);
+
+            const weaponMesh = createCSGOWeaponMesh('AK-47', skinColorHex);
+            weaponMesh.position.set(0.6, 2.2, 0.7);
+            group.add(weaponMesh);
 
             return group;
         }
 
-        function createDetailed3DWeapon(skinColorHex) {
+        // --- CS:GO WEAPON MESH ---
+        function createCSGOWeaponMesh(type, skinColorHex) {
             const group = new THREE.Group();
-            const mat = new THREE.MeshStandardMaterial({ color: skinColorHex || 0x00f0ff, metalness: 0.8, roughness: 0.2 });
+            const mainMat = new THREE.MeshStandardMaterial({ color: skinColorHex || 0x22252a, metalness: 0.8, roughness: 0.2 });
+            const woodMat = new THREE.MeshStandardMaterial({ color: 0x8a4b16, roughness: 0.6 });
 
-            const body = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.35, 1.6), mat);
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.32, 1.7), mainMat);
             group.add(body);
 
-            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.2), mat);
+            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 1.3), mainMat);
             barrel.rotation.x = Math.PI / 2; barrel.position.set(0, 0.1, 1.2);
             group.add(barrel);
 
-            const mag = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.6, 0.3), mat);
-            mag.position.set(0, -0.35, 0.2); group.add(mag);
+            const mag = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.6, 0.32), mainMat);
+            mag.rotation.x = -0.3; mag.position.set(0, -0.35, 0.2);
+            group.add(mag);
 
-            const scope = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.6), mat);
-            scope.rotation.x = Math.PI / 2; scope.position.set(0, 0.3, 0);
-            group.add(scope);
+            const stock = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.45, 0.8), woodMat);
+            stock.position.set(0, -0.1, -1.0);
+            group.add(stock);
 
             return group;
+        }
+
+        // --- GRENADE & SMOKE MECHANICS ---
+        function throwGrenade(type) {
+            if (gameState !== 'PLAYING') return;
+
+            const nadeGeo = type === 'HE' ? new THREE.CylinderGeometry(0.12, 0.12, 0.3, 12) : new THREE.CylinderGeometry(0.14, 0.14, 0.4, 12);
+            const nadeMat = new THREE.MeshStandardMaterial({ 
+                color: type === 'HE' ? 0x2e4a21 : 0x888888, 
+                metalness: 0.7, roughness: 0.3 
+            });
+            const nadeMesh = new THREE.Mesh(nadeGeo, nadeMat);
+
+            const startY = localState.posY + (localState.isCrouching ? 1.4 : 2.4);
+            nadeMesh.position.set(localState.x, startY, localState.z);
+
+            const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), localState.rotY);
+            const vel = forward.clone().multiplyScalar(0.75);
+            vel.y = 0.32;
+
+            nadeMesh.userData = { type: type, vel: vel, timer: 100 };
+            scene.add(nadeMesh);
+            activeGrenades.push(nadeMesh);
+        }
+
+        function createExplosion(pos) {
+            const expGeo = new THREE.SphereGeometry(2.5, 16, 16);
+            const expMat = new THREE.MeshBasicMaterial({ color: 0xff5500, wireframe: true });
+            const expMesh = new THREE.Mesh(expGeo, expMat);
+            expMesh.position.copy(pos);
+            scene.add(expMesh);
+            activeEffects.push({ mesh: expMesh, life: 25, scale: 0.1 });
+
+            let dist = pos.distanceTo(remoteMesh.position);
+            if (dist < 8) {
+                const dmg = Math.floor((1 - dist / 8) * 80);
+                remotePlayerState.hp -= dmg;
+                if (remotePlayerState.hp <= 0) {
+                    kills++;
+                    document.getElementById('kills-val').innerText = kills;
+                    remotePlayerState.hp = 100;
+                    remotePlayerState.x = (Math.random() - 0.5) * 40;
+                    remotePlayerState.z = (Math.random() - 0.5) * 40;
+                    if (kills >= TARGET_KILLS) endGame(true);
+                }
+            }
+        }
+
+        function createSmokeCloud(pos) {
+            const smokeGroup = new THREE.Group();
+            for (let i = 0; i < 12; i++) {
+                const cloudGeo = new THREE.SphereGeometry(1.8 + Math.random(), 12, 12);
+                const cloudMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, transparent: true, opacity: 0.85, roughness: 1.0 });
+                const cloud = new THREE.Mesh(cloudGeo, cloudMat);
+                cloud.position.set((Math.random() - 0.5) * 3, Math.random() * 2, (Math.random() - 0.5) * 3);
+                smokeGroup.add(cloud);
+            }
+            smokeGroup.position.copy(pos);
+            scene.add(smokeGroup);
+            activeEffects.push({ mesh: smokeGroup, life: 350, isSmoke: true });
         }
 
         function switchWeaponSlot(slot) {
@@ -688,7 +825,7 @@
             const currentW = WEAPONS.find(w => w.id === player.equipped[activeSlot]);
             if (!currentW) return;
 
-            const bulletGeo = new THREE.SphereGeometry(0.2, 8, 8);
+            const bulletGeo = new THREE.SphereGeometry(0.18, 8, 8);
             const bulletMat = new THREE.MeshBasicMaterial({ color: getActiveColor() });
             const bullet = new THREE.Mesh(bulletGeo, bulletMat);
 
@@ -712,10 +849,12 @@
                 }
             } else if (gameState === 'PLAYING') {
                 
+                // CROUCH WITH C KEY OR MOBILE BUTTON
                 localState.isCrouching = keys['c'] || keys['ჩ'];
                 let speed = activeSlot === 3 ? 0.22 : 0.16;
                 if (localState.isCrouching) speed *= 0.55;
 
+                // JUMP WITH SPACE KEY
                 if ((keys['space'] || keys[' ']) && !localState.isJumping && !localState.isCrouching) {
                     localState.velY = 0.26;
                     localState.isJumping = true;
@@ -737,17 +876,21 @@
                 const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), localState.rotY);
                 const right = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), localState.rotY);
 
-                // Keyboard Controls
+                // KEYBOARD CONTROLS (W, S, A, D)
                 if (keys['w'] || keys['წ']) { localState.x += forward.x * speed; localState.z += forward.z * speed; }
-                if (keys['s'] || keys['shared']) { localState.x -= forward.x * speed; localState.z -= forward.z * speed; }
-                if (keys['a'] || keys['a']) { localState.x -= right.x * speed; localState.z -= right.z * speed; }
-                if (keys['d'] || keys['d']) { localState.x += right.x * speed; localState.z += right.z * speed; }
+                if (keys['s'] || keys['ს']) { localState.x -= forward.x * speed; localState.z -= forward.z * speed; }
+                if (keys['a'] || keys['ა']) { localState.x -= right.x * speed; localState.z -= right.z * speed; }
+                if (keys['d'] || keys['დ']) { localState.x += right.x * speed; localState.z += right.z * speed; }
 
-                // Round Touch Joystick Input
+                // MOBILE ROUND JOYSTICK
                 if (joyDir.forward !== 0 || joyDir.right !== 0) {
                     localState.x += (forward.x * joyDir.forward + right.x * joyDir.right) * speed;
                     localState.z += (forward.z * joyDir.forward + right.z * joyDir.right) * speed;
                 }
+
+                // BOUNDARY COLLISION WITH PERIMETER WALLS (-58 to 58)
+                localState.x = Math.max(-57, Math.min(57, localState.x));
+                localState.z = Math.max(-57, Math.min(57, localState.z));
 
                 localMesh.scale.y = localState.isCrouching ? 0.6 : 1.0;
                 localMesh.position.set(localState.x, localState.posY, localState.z);
@@ -766,6 +909,36 @@
                     camera.lookAt(localState.x, localState.posY + 2, localState.z);
                     localMesh.visible = true;
                 }
+
+                // Grenades Loop
+                activeGrenades.forEach((nade, idx) => {
+                    nade.position.add(nade.userData.vel);
+                    nade.userData.vel.y -= 0.015;
+                    nade.userData.timer--;
+
+                    if (nade.position.y <= 0.2 || nade.userData.timer <= 0) {
+                        if (nade.userData.type === 'HE') createExplosion(nade.position.clone());
+                        else createSmokeCloud(nade.position.clone());
+                        scene.remove(nade);
+                        activeGrenades.splice(idx, 1);
+                    }
+                });
+
+                // Effects Loop
+                activeEffects.forEach((eff, idx) => {
+                    eff.life--;
+                    if (eff.isSmoke) {
+                        if (eff.life < 50) {
+                            eff.mesh.traverse(c => { if(c.material) c.material.opacity = eff.life / 50; });
+                        }
+                    } else {
+                        eff.mesh.scale.addScalar(0.15);
+                    }
+                    if (eff.life <= 0) {
+                        scene.remove(eff.mesh);
+                        activeEffects.splice(idx, 1);
+                    }
+                });
 
                 if (isBotMatch) {
                     let dx = localState.x - remotePlayerState.x;
@@ -820,7 +993,7 @@
                 });
 
                 if (conn && !isBotMatch) {
-                    conn.send({ type: 'GAME_STATE', player: localState, bullets: [] });
+                    conn.send({ type: 'GAME_STATE', player: localState });
                 }
 
                 document.getElementById('hp-val').innerText = Math.max(0, localState.hp);
@@ -857,14 +1030,14 @@
                 if (player.wins >= 10) {
                     player.level++;
                     player.wins = 0;
-                    levelUpMsg = `\n🎉 გილოცავთ! 10 მოგება დააგროვეთ და გადახვედით ${player.level} ლეველზე! გაგეხსნათ 3 ახალი 3D იარაღი!`;
+                    levelUpMsg = `\n🎉 გილოცავთ! 10 მოგება დააგროვეთ და გადახვედით ${player.level} ლეველზე! გაგეხსნათ 3 ახალი CS:GO იარაღი!`;
                 } else {
                     levelUpMsg = `\nლეველის მოსამატებლად დარჩენილია ${10 - player.wins} მოგება.`;
                 }
             }
 
             savePlayerData();
-            alert(`${won ? '🏆 3D WIN / მოგება!' : '☠️ DEFEAT / წაგება!'}\n🎯 Kills: ${kills}/${TARGET_KILLS}\n+${totalEarned} 🪙${levelUpMsg}`);
+            alert(`${won ? '🏆 CS:GO WIN / მოგება!' : '☠️ DEFEAT / წაგება!'}\n🎯 Kills: ${kills}/${TARGET_KILLS}\n+${totalEarned} 🪙${levelUpMsg}`);
             location.reload();
         }
 
