@@ -336,7 +336,7 @@
 
                         skinsHTML += `
                             <button class="skin-btn ${isSkinEquipped ? 'btn-sec' : ''}" onclick="handleSkinAction(${w.id}, ${w.slot}, ${idx}, ${s.price})">
-                                ${hasSkin ? (isSkinEquipped ? t.equipped : `Skin: \${s.name}`) : `\${t.buy}: \\({s.name} (\\){s.price}🪙)`}
+                                ${hasSkin ? (isSkinEquipped ? t.equipped : `Skin: ${s.name}`) : `${t.buy}: ${s.name} (${s.price}🪙)`}
                             </button>`;
                     });
                 }
@@ -345,7 +345,7 @@
                     <div class="weapon-card ${unlocked ? 'unlocked' : ''} ${isEquipped ? 'equipped' : ''}">
                         <div style="font-weight:700; color:${w.color}; font-size:1rem;">${w.name}</div>
                         <div style="font-size:0.8rem; color:#aaa; margin:4px 0;">Damage: ${w.damage} | Lvl: ${w.levelReq}</div>
-                        ${unlocked ? `<button onclick="equipWeapon(\${w.id}, \\({w.slot})" style="width:100%; padding:5px; font-size:0.8rem;">\\){isEquipped ? t.equipped : t.equip}</button>` : `<div style="color:#ff0055; font-size:0.8rem;">\${t.locked}</div>`}
+                        ${unlocked ? `<button onclick="equipWeapon(${w.id}, ${w.slot})" style="width:100%; padding:5px; font-size:0.8rem;">${isEquipped ? t.equipped : t.equip}</button>` : `<div style="color:#ff0055; font-size:0.8rem;">${t.locked}</div>`}
                         ${skinsHTML}
                     </div>`;
             });
@@ -872,4 +872,4 @@
         initEngine3D();
     </script>
 </body>
-</html
+</html>
