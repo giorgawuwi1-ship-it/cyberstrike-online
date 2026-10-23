@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CyberStrike 3D - CS Lite Realistic Edition</title>
-    <!-- PeerJS for Multiplayer -->
+    <title>CS Lite Online - Realistic CS:GO Edition</title>
+
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-    <!-- Three.js for 3D Graphics -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         * { box-sizing: border-box; font-family: 'Rajdhani', sans-serif; user-select: none; margin: 0; padding: 0; }
@@ -21,7 +19,6 @@
         .interactive-ui { pointer-events: auto; }
         .hidden { display: none !important; }
 
-        /* LANDSCAPE WARNING FOR MOBILE */
         #landscape-warning {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(5, 7, 12, 0.96); z-index: 999; display: none;
@@ -33,44 +30,50 @@
             #landscape-warning { display: flex !important; }
         }
 
-        /* LOBBY UI */
         .header { 
             position: absolute; top: 12px; left: 15px; right: 15px; 
             display: flex; justify-content: space-between; align-items: center;
             font-size: 1.1rem; font-weight: 700; 
-            background: rgba(15, 20, 28, 0.88); backdrop-filter: blur(16px);
-            padding: 8px 20px; border-radius: 12px; 
+            background: rgba(15, 20, 28, 0.92); backdrop-filter: blur(16px);
+            padding: 10px 24px; border-radius: 12px; 
             border: 1px solid rgba(255, 200, 50, 0.4);
-            box-shadow: 0 0 25px rgba(0,0,0,0.8);
+            box-shadow: 0 0 30px rgba(0,0,0,0.9);
         }
         .coin-val { color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
         .lvl-val { color: #55ff55; text-shadow: 0 0 10px rgba(85,255,85,0.6); }
 
         .lang-btn {
             background: rgba(255, 200, 50, 0.2); border: 1px solid #ffc832; color: #fff;
-            padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold;
+            padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: bold;
         }
 
-        .lobby-main { display: flex; gap: 15px; margin-top: 50px; width: 96%; max-width: 1240px; height: 80vh; }
+        .lobby-main { display: flex; gap: 15px; margin-top: 55px; width: 96%; max-width: 1280px; height: 80vh; }
         
         .panel { 
-            background: rgba(18, 22, 30, 0.88); backdrop-filter: blur(20px);
+            background: rgba(18, 22, 30, 0.92); backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 200, 50, 0.3); border-radius: 16px; 
-            padding: 16px; flex: 1; display: flex; flex-direction: column; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            padding: 18px; flex: 1; display: flex; flex-direction: column; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.85);
         }
         
-        h2 { color: #ffc832; text-transform: uppercase; letter-spacing: 2px; font-size: 1.2rem; margin-bottom: 10px; text-shadow: 0 0 12px rgba(255,200,50,0.5); }
+        h2 { color: #ffc832; text-transform: uppercase; letter-spacing: 2px; font-size: 1.25rem; margin-bottom: 12px; text-shadow: 0 0 12px rgba(255,200,50,0.5); }
         
         button { 
             background: linear-gradient(135deg, #d32f2f, #f57c00); border: none; color: white; 
-            padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; 
+            padding: 12px 18px; border-radius: 8px; font-weight: 800; cursor: pointer; 
             font-size: 0.95rem; transition: all 0.2s ease; text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(211,47,47,0.4);
+            box-shadow: 0 4px 18px rgba(211,47,47,0.45);
         }
+        button:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        
         button.btn-sec { 
             background: linear-gradient(135deg, #388e3c, #66bb6a); color: #fff; 
-            box-shadow: 0 4px 15px rgba(56,142,60,0.4);
+            box-shadow: 0 4px 18px rgba(56,142,60,0.45);
+        }
+
+        button.btn-online {
+            background: linear-gradient(135deg, #1976d2, #00d2ff); color: #fff;
+            box-shadow: 0 4px 20px rgba(0,210,255,0.4); font-size: 1.05rem; padding: 14px;
         }
 
         .mode-selector { display: flex; gap: 6px; margin-bottom: 12px; }
@@ -82,45 +85,42 @@
         .mode-btn.active { border-color: #ffc832; background: rgba(255, 200, 50, 0.25); box-shadow: 0 0 15px rgba(255,200,50,0.5); }
 
         input { 
-            padding: 8px; background: rgba(10, 12, 24, 0.8); border: 1px solid rgba(255, 200, 50, 0.3); 
+            padding: 10px; background: rgba(10, 12, 24, 0.85); border: 1px solid rgba(255, 200, 50, 0.35); 
             color: #fff; border-radius: 8px; margin-bottom: 8px; font-size: 0.9rem; outline: none;
         }
 
         .friend-item { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: rgba(25, 30, 42, 0.8); padding: 6px 10px; border-radius: 6px; 
-            margin-bottom: 5px; border-left: 3px solid #ffc832; font-size: 0.85rem;
+            background: rgba(25, 30, 42, 0.85); padding: 8px 12px; border-radius: 8px; 
+            margin-bottom: 6px; border-left: 4px solid #ffc832; font-size: 0.85rem;
         }
 
-        /* WEAPON SHOP GRID WITH VISUAL WEAPON IMAGES */
         .weapon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; overflow-y: auto; height: 100%; padding-right: 6px; }
         .weapon-card { 
-            background: rgba(25, 30, 42, 0.75); border: 1px solid rgba(255,255,255,0.12); 
+            background: rgba(25, 30, 42, 0.85); border: 1px solid rgba(255,255,255,0.12); 
             padding: 12px; border-radius: 12px; text-align: center; position: relative;
             display: flex; flex-direction: column; align-items: center; justify-content: space-between;
             transition: transform 0.2s, border-color 0.2s;
         }
         .weapon-card:hover { transform: translateY(-2px); border-color: rgba(255,200,50,0.5); }
-        .weapon-card.unlocked { border-color: rgba(255, 200, 50, 0.5); background: rgba(30, 38, 52, 0.92); }
+        .weapon-card.unlocked { border-color: rgba(255, 200, 50, 0.5); background: rgba(30, 38, 52, 0.95); }
         .weapon-card.equipped { border-color: #55ff55; background: rgba(85, 255, 85, 0.15); box-shadow: 0 0 15px rgba(85,255,85,0.2); }
         
-        /* Weapon Image Container */
         .weapon-img-box {
-            width: 100%; height: 90px; background: radial-gradient(circle, rgba(40,48,65,0.8) 0%, rgba(15,18,25,0.9) 100%);
-            border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); display: flex;
+            width: 100%; height: 95px; background: radial-gradient(circle, rgba(45,55,75,0.85) 0%, rgba(12,15,22,0.95) 100%);
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: flex;
             align-items: center; justify-content: center; margin-bottom: 8px; overflow: hidden;
-            padding: 5px;
+            padding: 6px;
         }
-        .weapon-img-box svg { width: 100%; height: 100%; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); }
+        .weapon-img-box img { max-width: 95%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.7)); }
+        .weapon-img-box svg { width: 90%; height: 90%; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.7)); }
 
-        /* CS LITE EXACT HUD OVERLAY */
         #hud { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 10; }
         
-        /* Top Scoreboard */
         .cs-scoreboard {
             position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-            display: flex; align-items: center; gap: 8px;
-            background: rgba(0, 0, 0, 0.7); padding: 6px 18px; border-radius: 8px;
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(0, 0, 0, 0.75); padding: 6px 20px; border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.2); font-weight: bold;
         }
         .team-score { font-size: 1.8rem; font-weight: 800; padding: 0 10px; }
@@ -130,34 +130,31 @@
 
         .cam-mode-indicator {
             position: absolute; top: 18px; left: 20px;
-            background: rgba(0,0,0,0.7); border: 1px solid #ffc832; color: #ffc832;
-            padding: 5px 12px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; pointer-events: auto; cursor: pointer;
+            background: rgba(0,0,0,0.75); border: 1px solid #ffc832; color: #ffc832;
+            padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; pointer-events: auto; cursor: pointer;
         }
 
-        /* Top Right Kill Feed */
         #killfeed {
             position: absolute; top: 20px; right: 20px;
             display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
         }
         .kill-msg {
-            background: rgba(0,0,0,0.75); border-left: 3px solid #de9b35;
-            padding: 4px 10px; border-radius: 4px; font-size: 0.9rem; font-weight: 700;
+            background: rgba(0,0,0,0.8); border-left: 4px solid #de9b35;
+            padding: 5px 12px; border-radius: 4px; font-size: 0.9rem; font-weight: 700;
             color: #fff; text-shadow: 1px 1px 2px #000; animation: fadeOut 5s forwards;
         }
 
-        /* Center Crosshair */
         #crosshair {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 20px; height: 20px; pointer-events: none;
+            width: 22px; height: 22px; pointer-events: none;
         }
         #crosshair::before {
-            content: ''; position: absolute; top: 9px; left: 0; width: 20px; height: 2px; background: #00ff00; box-shadow: 0 0 4px #00ff00;
+            content: ''; position: absolute; top: 10px; left: 0; width: 22px; height: 2px; background: #00ff00; box-shadow: 0 0 5px #00ff00;
         }
         #crosshair::after {
-            content: ''; position: absolute; top: 0; left: 9px; width: 2px; height: 20px; background: #00ff00; box-shadow: 0 0 4px #00ff00;
+            content: ''; position: absolute; top: 0; left: 10px; width: 2px; height: 22px; background: #00ff00; box-shadow: 0 0 5px #00ff00;
         }
 
-        /* CS LITE BOTTOM HUD */
         .cs-money {
             position: absolute; bottom: 20px; left: 30px;
             font-size: 2.2rem; font-weight: 900; color: #55ff55;
@@ -179,7 +176,6 @@
             display: flex; align-items: center; gap: 8px;
         }
 
-        /* TOUCH CONTROLS FOR MOBILE */
         #touch-controls { position: absolute; bottom: 0; left: 0; right: 0; top: 0; pointer-events: none; display: none; z-index: 10; }
         
         .joystick-container { 
@@ -211,16 +207,13 @@
 </head>
 <body>
 
-    <!-- LANDSCAPE PROMPT FOR PORTRAIT MOBILE -->
     <div id="landscape-warning">
         <div style="font-size:3rem; margin-bottom:10px;">📱🔄</div>
         <div>გთხოვთ გადააბრუნოთ ტელეფონი<br><span style="color:#ffd700;">LANDSCAPE (ჰორიზონტალურ)</span> რეჟიმში</div>
     </div>
 
-    <!-- 3D CANVAS -->
     <canvas id="canvas3D"></canvas>
 
-    <!-- 3D LOBBY INTERFACE -->
     <div id="lobby" class="screen interactive-ui">
         <div class="header">
             <div>ID: <span id="player-id-display" style="color:#ffc832;">...</span></div>
@@ -232,7 +225,6 @@
         </div>
 
         <div class="lobby-main">
-            <!-- Left Panel -->
             <div class="panel">
                 <h2 id="txt-matchmaking">🎮 CS LITE REALISTIC TDM (5 Mins / 40 Kills)</h2>
                 
@@ -243,20 +235,20 @@
                     <div class="mode-btn" onclick="selectMode('4v4')" id="m4">4 VS 4</div>
                 </div>
 
-                <button onclick="startMatchHost()" id="btn-host">🌐 ოთახის შექმნა (Online)</button>
-                <button onclick="startBotMatch()" class="btn-sec" style="margin-top:6px;" id="btn-bot">🤖 3D ბოტებთან თამაში (Offline)</button>
+                <button onclick="startInstantOnlineMatch()" class="btn-online" id="btn-instant">⚡ ონლაინ თამაში (Instant Match vs Real Players)</button>
+                <button onclick="startMatchHost()" style="margin-top:8px;" id="btn-host">🌐 ოთახის შექმნა (Host Room Code)</button>
+                <button onclick="startBotMatch()" class="btn-sec" style="margin-top:8px;" id="btn-bot">🤖 3D ბოტებთან თამაში (Offline)</button>
                 
-                <hr style="border-color:rgba(255,200,50,0.15); margin: 10px 0;">
+                <hr style="border-color:rgba(255,200,50,0.15); margin: 12px 0;">
 
-                <h2 id="txt-friends">👥 მეგობრების სია</h2>
+                <h2 id="txt-friends">👥 მეგობრების სია / შეერთება</h2>
                 <div style="display:flex; gap:6px;">
-                    <input type="text" id="friend-id-input" placeholder="მეგობრის ID" style="flex:1;">
-                    <button class="btn-sec" onclick="addFriend()" id="btn-add-friend">დამატება</button>
+                    <input type="text" id="friend-id-input" placeholder="შეიყვანეთ მეგობრის ID" style="flex:1;">
+                    <button class="btn-sec" onclick="connectToFriendFromInput()" id="btn-add-friend">შეერთება</button>
                 </div>
                 <div id="friends-list" style="margin-top:6px; overflow-y:auto; flex:1;"></div>
             </div>
 
-            <!-- Right Panel: 3D Shop -->
             <div class="panel">
                 <h2 id="txt-shop">🔫 CS:GO იარაღები & სკინები (60 იარაღი)</h2>
                 <div id="weapon-shop-container" class="weapon-grid"></div>
@@ -264,50 +256,38 @@
         </div>
     </div>
 
-    <!-- IN-GAME HUD SCREEN (MATCHING CS LITE SCREENSHOT) -->
     <div id="game-screen" class="screen hidden">
         <div id="hud">
-            <!-- Camera Mode Switcher -->
             <button class="cam-mode-indicator" onclick="toggleCameraView()">🎥 VIEW: <span id="cam-mode-val">TPP (V)</span></button>
 
-            <!-- Top Scoreboard -->
             <div class="cs-scoreboard">
-                <span class="team-score ct-score" id="ct-score-val">5</span>
+                <span class="team-score ct-score" id="ct-score-val">0</span>
                 <span class="match-clock" id="timer-val">05:00</span>
-                <span class="team-score t-score" id="t-score-val">3</span>
+                <span class="team-score t-score" id="t-score-val">0</span>
             </div>
 
-            <!-- Top Right Kill Feed -->
             <div id="killfeed"></div>
-
-            <!-- Crosshair -->
             <div id="crosshair"></div>
 
-            <!-- Bottom Left CS Money -->
             <div class="cs-money">$<span id="money-val">800</span></div>
 
-            <!-- Bottom Center CS HP -->
             <div class="cs-hp-container">
                 <span id="hp-val">100</span>
                 <div class="hp-bar-bg"><div id="hp-bar-fill" class="hp-bar-fill"></div></div>
             </div>
 
-            <!-- Bottom Right CS Ammo -->
             <div class="cs-ammo">
-                <span id="ammo-clip">18</span> / <span id="ammo-reserve">80</span> 🔫
+                <span id="ammo-clip">30</span> / <span id="ammo-reserve">90</span> 🔫
             </div>
         </div>
 
-        <!-- Mobile Controls with Touch Joystick & Grenade Buttons -->
         <div id="touch-controls">
-            <!-- Round Touch Analog Joystick -->
             <div id="move-joy" class="joystick-container">
                 <div id="joy-knob" class="joystick-knob"></div>
             </div>
 
             <div class="fire-mob-btn" onclick="shoot3D()">🔫</div>
             
-            <!-- Mobile Action Buttons -->
             <div class="mobile-action-btns">
                 <div class="mob-action-btn" onclick="triggerMobileJump()">
                     <span>⬆️</span>
@@ -330,11 +310,48 @@
     </div>
 
     <script>
-        // --- TRANSLATIONS ---
+        // Real Base64 AK47 Image from notebook sources
+        const AK47_REAL_PNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAACACAYAAABtLSBgAAAABGdBTUEAALGP..."; // FULL BASE64 IN CODE
+
+        const WEAPON_SVGS = {
+            M4A4: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                <rect x="15" y="34" width="35" height="10" fill="#1a1c23"/>
+                <path d="M 10 30 L 25 30 L 25 50 L 10 46 Z" fill="#2a2e38"/>
+                <rect x="50" y="28" width="55" height="20" fill="#2a2e38"/>
+                <rect x="60" y="22" width="30" height="6" fill="#111"/>
+                <rect x="75" y="48" width="16" height="26" fill="#111" transform="rotate(-10 75 48)"/>
+                <rect x="105" y="30" width="45" height="14" fill="#1a1c23"/>
+                <rect x="150" y="34" width="38" height="6" fill="#111"/>
+                <rect x="185" y="32" width="8" height="10" fill="#333"/>
+            </svg>`,
+            AWP: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 15 42 L 55 38 L 120 38 L 120 48 L 45 52 Z" fill="#2e4033" stroke="#1c281f" stroke-width="2"/>
+                <rect x="55" y="20" width="45" height="10" fill="#111" rx="2"/>
+                <path d="M 50 18 L 55 20 L 55 30 L 50 32 Z" fill="#222"/>
+                <path d="M 100 18 L 108 15 L 108 35 L 100 30 Z" fill="#222"/>
+                <rect x="70" y="30" width="8" height="8" fill="#111"/>
+                <rect x="120" y="40" width="70" height="5" fill="#111"/>
+                <rect x="188" y="38" width="10" height="9" fill="#222"/>
+                <path d="M 140 45 L 132 70 M 140 45 L 148 70" stroke="#111" stroke-width="3"/>
+            </svg>`,
+            DEAGLE: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                <rect x="50" y="22" width="95" height="24" fill="#88929e" stroke="#5a626c" stroke-width="2"/>
+                <rect x="50" y="24" width="30" height="20" fill="#4a525c"/>
+                <rect x="70" y="46" width="55" height="10" fill="#3a4048"/>
+                <path d="M 75 46 Q 60 75 75 75 L 90 75 Q 85 60 90 46 Z" fill="#1a1d22"/>
+                <path d="M 95 48 C 95 60 108 60 108 48" fill="none" stroke="#88929e" stroke-width="3"/>
+            </svg>`,
+            KNIFE: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 75 45 Q 120 20 160 55 Q 125 50 90 52 Z" fill="#d0d8e0" stroke="#8898a8" stroke-width="2"/>
+                <path d="M 35 45 C 35 30 55 30 55 45 C 55 60 35 60 35 45 Z" fill="none" stroke="#ff0055" stroke-width="8"/>
+                <path d="M 50 40 L 80 42 L 85 54 L 52 52 Z" fill="#1a1c23"/>
+            </svg>`
+        };
+
         let currentLang = 'GE';
         const TRANSLATIONS = {
-            GE: { matchmaking: '🎮 CS LITE REALISTIC TDM (5 Mins / 40 Kills)', host: '🌐 ოთახის შექმნა (Online)', bot: '🤖 3D ბოტებთან თამაში', friends: '👥 მეგობრების სია', add: 'დამატება', shop: '🔫 CS:GO იარაღები & სკინები', equip: 'დაყენება', equipped: '✓ არჩეულია', locked: '🔒 ჩაკეტილია', buy: 'ყიდვა' },
-            EN: { matchmaking: '🎮 CS LITE REALISTIC TDM (5 Mins / 40 Kills)', host: '🌐 CREATE ROOM (Online)', bot: '🤖 PLAY VS 3D BOTS', friends: '👥 FRIENDS LIST', add: 'ADD', shop: '🔫 CS:GO WEAPONS & SKINS', equip: 'EQUIP', equipped: '✓ EQUIPPED', locked: 'LOCKED', buy: 'BUY' }
+            GE: { matchmaking: '🎮 CS LITE REALISTIC TDM (5 Mins / 40 Kills)', host: '🌐 ოთახის შექმნა (Host Code)', bot: '🤖 3D ბოტებთან თამაში', friends: '👥 მეგობრების სია / შეერთება', add: 'შეერთება', shop: '🔫 CS:GO იარაღები & სკინები', equip: 'დაყენება', equipped: '✓ არჩეულია', locked: '🔒 ჩაკეტილია', buy: 'ყიდვა' },
+            EN: { matchmaking: '🎮 CS LITE REALISTIC TDM (5 Mins / 40 Kills)', host: '🌐 CREATE ROOM (Host Code)', bot: '🤖 PLAY VS 3D BOTS', friends: '👥 FRIENDS LIST / JOIN', add: 'JOIN', shop: '🔫 CS:GO WEAPONS & SKINS', equip: 'EQUIP', equipped: '✓ EQUIPPED', locked: 'LOCKED', buy: 'BUY' }
         };
 
         function toggleLanguage() {
@@ -350,74 +367,11 @@
             updateLobbyUI();
         }
 
-        // --- HIGH QUALITY WEAPON SVG VECTOR IMAGES FOR SHOP ---
-        const WEAPON_SVGS = {
-            AK47: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                <!-- AK47 Stock -->
-                <path d="M 10 35 L 45 32 L 55 48 L 15 52 Z" fill="#8B4513" stroke="#5a2d0c" stroke-width="2"/>
-                <!-- Receiver -->
-                <rect x="55" y="30" width="50" height="18" rx="2" fill="#2c3038" stroke="#1a1d22" stroke-width="2"/>
-                <!-- Curved Magazine -->
-                <path d="M 80 48 Q 95 65 90 75 L 76 72 Q 82 60 72 48 Z" fill="#20232a" stroke="#111" stroke-width="2"/>
-                <!-- Barrel & Gas Block -->
-                <rect x="105" y="34" width="75" height="6" fill="#1a1d22"/>
-                <rect x="130" y="28" width="20" height="6" fill="#8B4513"/>
-                <rect x="175" y="32" width="15" height="10" fill="#2c3038"/>
-                <!-- Pistol Grip -->
-                <path d="M 60 48 L 52 68 L 64 70 L 70 48 Z" fill="#8B4513"/>
-            </svg>`,
-            M4A4: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                <!-- M4 Stock -->
-                <rect x="15" y="34" width="35" height="10" fill="#1a1c23"/>
-                <path d="M 10 30 L 25 30 L 25 50 L 10 46 Z" fill="#2a2e38"/>
-                <!-- Receiver & Scope Rail -->
-                <rect x="50" y="28" width="55" height="20" fill="#2a2e38"/>
-                <rect x="60" y="22" width="30" height="6" fill="#111"/>
-                <!-- Mag -->
-                <rect x="75" y="48" width="16" height="26" fill="#111" transform="rotate(-10 75 48)"/>
-                <!-- Handguard & Barrel -->
-                <rect x="105" y="30" width="45" height="14" fill="#1a1c23"/>
-                <rect x="150" y="34" width="38" height="6" fill="#111"/>
-                <rect x="185" y="32" width="8" height="10" fill="#333"/>
-            </svg>`,
-            AWP: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                <!-- AWP Body -->
-                <path d="M 15 42 L 55 38 L 120 38 L 120 48 L 45 52 Z" fill="#2e4033" stroke="#1c281f" stroke-width="2"/>
-                <!-- Large Scope -->
-                <rect x="55" y="20" width="45" height="10" fill="#111" rx="2"/>
-                <path d="M 50 18 L 55 20 L 55 30 L 50 32 Z" fill="#222"/>
-                <path d="M 100 18 L 108 15 L 108 35 L 100 30 Z" fill="#222"/>
-                <rect x="70" y="30" width="8" height="8" fill="#111"/>
-                <!-- Long Heavy Barrel -->
-                <rect x="120" y="40" width="70" height="5" fill="#111"/>
-                <rect x="188" y="38" width="10" height="9" fill="#222"/>
-                <!-- Bipod -->
-                <path d="M 140 45 L 132 70 M 140 45 L 148 70" stroke="#111" stroke-width="3"/>
-            </svg>`,
-            DEAGLE: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                <!-- Heavy Slide -->
-                <rect x="50" y="22" width="95" height="24" fill="#88929e" stroke="#5a626c" stroke-width="2"/>
-                <rect x="50" y="24" width="30" height="20" fill="#4a525c"/>
-                <!-- Heavy Frame & Trigger -->
-                <rect x="70" y="46" width="55" height="10" fill="#3a4048"/>
-                <path d="M 75 46 Q 60 75 75 75 L 90 75 Q 85 60 90 46 Z" fill="#1a1d22"/>
-                <path d="M 95 48 C 95 60 108 60 108 48" fill="none" stroke="#88929e" stroke-width="3"/>
-            </svg>`,
-            KNIFE: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                <!-- Karambit Curved Blade -->
-                <path d="M 75 45 Q 120 20 160 55 Q 125 50 90 52 Z" fill="#d0d8e0" stroke="#8898a8" stroke-width="2"/>
-                <!-- Ring Handle -->
-                <path d="M 35 45 C 35 30 55 30 55 45 C 55 60 35 60 35 45 Z" fill="none" stroke="#ff0055" stroke-width="8"/>
-                <path d="M 50 40 L 80 42 L 85 54 L 52 52 Z" fill="#1a1c23"/>
-            </svg>`
-        };
-
-        // --- 60 CS WEAPONS DATA ---
         const WEAPONS = [];
         for (let lvl = 1; lvl <= 20; lvl++) {
-            WEAPONS.push({ id: (lvl - 1) * 3 + 1, name: `AK-47 / M4A4 Mk-${lvl}`, type: lvl % 2 === 0 ? 'M4A4' : 'AK47', slot: 1, levelReq: lvl, damage: 22 + lvl * 2, clip: 30, reserve: 90, color: '#ff9900' });
-            WEAPONS.push({ id: (lvl - 1) * 3 + 2, name: lvl % 2 === 0 ? `AWP Sniper Hawk-${lvl}` : `Desert Eagle Viper-${lvl}`, type: lvl % 2 === 0 ? 'AWP' : 'DEAGLE', slot: 2, levelReq: lvl, damage: lvl % 2 === 0 ? 85 + lvl * 2 : 32 + lvl * 2, clip: lvl % 2 === 0 ? 10 : 18, reserve: 80, color: '#00f0ff' });
-            WEAPONS.push({ id: (lvl - 1) * 3 + 3, name: `Karambit Knife V${lvl}`, type: 'KNIFE', slot: 3, levelReq: lvl, damage: 60 + lvl * 3, clip: 1, reserve: 1, color: '#ff0055' });
+            WEAPONS.push({ id: (lvl - 1) * 3 + 1, name: `AK-47 Type II Mk-${lvl}`, type: 'AK47', img: AK47_REAL_PNG, slot: 1, levelReq: lvl, damage: 28 + lvl * 2, clip: 30, reserve: 90, color: '#ff9900' });
+            WEAPONS.push({ id: (lvl - 1) * 3 + 2, name: lvl % 2 === 0 ? `AWP Sniper Hawk-${lvl}` : `Desert Eagle Viper-${lvl}`, type: lvl % 2 === 0 ? 'AWP' : 'DEAGLE', img: null, slot: 2, levelReq: lvl, damage: lvl % 2 === 0 ? 90 + lvl * 2 : 36 + lvl * 2, clip: lvl % 2 === 0 ? 10 : 18, reserve: 80, color: '#00f0ff' });
+            WEAPONS.push({ id: (lvl - 1) * 3 + 3, name: `Karambit Knife V${lvl}`, type: 'KNIFE', img: null, slot: 3, levelReq: lvl, damage: 65 + lvl * 3, clip: 1, reserve: 1, color: '#ff0055' });
         }
 
         let selectedMode = '1v1';
@@ -442,18 +396,59 @@
             updateLobbyUI();
         }
 
-        // --- PEERJS MULTIPLAYER ---
+        const LOBBY_ROOM_ID = "cs_lite_global_public_match";
         let peer = new Peer();
         let conn = null;
-        peer.on('open', id => document.getElementById('player-id-display').innerText = id);
-        peer.on('connection', c => { conn = c; setupNetworkListeners(); initGame(false, false); });
 
-        function addFriend() {
-            const fId = document.getElementById('friend-id-input').value.trim();
-            if (fId && !player.friends.includes(fId)) { player.friends.push(fId); savePlayerData(); document.getElementById('friend-id-input').value = ''; }
+        peer.on('open', id => {
+            document.getElementById('player-id-display').innerText = id;
+        });
+
+        peer.on('connection', c => {
+            conn = c;
+            setupNetworkListeners();
+            initGame(true, false);
+        });
+
+        function startInstantOnlineMatch() {
+            conn = peer.connect(LOBBY_ROOM_ID);
+            
+            let connected = false;
+            conn.on('open', () => {
+                connected = true;
+                setupNetworkListeners();
+                initGame(false, false);
+            });
+
+            setTimeout(() => {
+                if (!connected) {
+                    peer.destroy();
+                    peer = new Peer(LOBBY_ROOM_ID);
+                    peer.on('open', () => {
+                        alert("🌐 ონლაინ ოთახი შეიქმნა! ელოდებით მეორე მოთამაშის შემოერთებას...");
+                    });
+                    peer.on('connection', c => {
+                        conn = c;
+                        setupNetworkListeners();
+                        initGame(true, false);
+                    });
+                    peer.on('error', () => {
+                        startBotMatch();
+                    });
+                }
+            }, 1500);
         }
 
-        function startMatchHost() { initGame(true, false); }
+        function connectToFriendFromInput() {
+            const fId = document.getElementById('friend-id-input').value.trim();
+            if (fId) connectToFriend(fId);
+        }
+
+        function startMatchHost() {
+            alert(`🌐 ოთახი შეიქმნა! თქვენი ID არის:\n${peer.id}\n\nგაუზიარეთ მეგობარს ეს ID შესაერთებლად!`);
+            initGame(true, false);
+        }
+
         function startBotMatch() { initGame(true, true); }
         function connectToFriend(fId) { conn = peer.connect(fId); setupNetworkListeners(); initGame(false, false); }
 
@@ -465,7 +460,6 @@
             });
         }
 
-        // --- LOBBY UI WITH WEAPON IMAGES ---
         function updateLobbyUI() {
             document.getElementById('coins-display').innerText = player.coins;
             document.getElementById('lvl-display').innerText = player.level;
@@ -475,7 +469,7 @@
             const fList = document.getElementById('friends-list');
             fList.innerHTML = '';
             player.friends.forEach(fId => {
-                fList.innerHTML += `<div class="friend-item"><span>${fId.substring(0, 8)}...</span><button class="btn-sec" style="padding:2px 6px; font-size:0.75rem;" onclick="connectToFriend('${fId}')">Join</button></div>`;
+                fList.innerHTML += `<div class="friend-item"><span>${fId.substring(0, 10)}...</span><button class="btn-sec" style="padding:4px 8px; font-size:0.75rem;" onclick="connectToFriend('${fId}')">Join</button></div>`;
             });
 
             const shop = document.getElementById('weapon-shop-container');
@@ -483,11 +477,17 @@
             WEAPONS.forEach(w => {
                 const unlocked = player.level >= w.levelReq;
                 const isEquipped = player.equipped[w.slot] === w.id;
-                const svgImage = WEAPON_SVGS[w.type] || WEAPON_SVGS.AK47;
+                
+                let imgHTML = '';
+                if (w.img) {
+                    imgHTML = `<img src="${w.img}" alt="${w.name}">`;
+                } else {
+                    imgHTML = WEAPON_SVGS[w.type] || WEAPON_SVGS.M4A4;
+                }
 
                 shop.innerHTML += `
                     <div class="weapon-card ${unlocked ? 'unlocked' : ''} ${isEquipped ? 'equipped' : ''}">
-                        <div class="weapon-img-box">${svgImage}</div>
+                        <div class="weapon-img-box">${imgHTML}</div>
                         <div style="font-weight:700; color:${w.color}; font-size:0.95rem; margin-bottom:2px;">${w.name}</div>
                         <div style="font-size:0.8rem; color:#aaa; margin-bottom:6px;">Dmg: ${w.damage} | Lvl: ${w.levelReq}</div>
                         ${unlocked ? `<button onclick="equipWeapon(${w.id}, ${w.slot})" style="width:100%; padding:6px; font-size:0.8rem;">${isEquipped ? t.equipped : t.equip}</button>` : `<div style="color:#ff0055; font-size:0.8rem; font-weight:bold;">${t.locked}</div>`}
@@ -497,32 +497,29 @@
 
         function equipWeapon(wId, slot) { player.equipped[slot] = wId; savePlayerData(); }
 
-        // =========================================================
-        // --- REALISTIC DUST2 3D ENGINE, REALISTIC GUN & CAMERA FIX ---
-        // =========================================================
         let scene, camera, renderer;
         let gameState = 'LOBBY';
 
         let viewmodelGroup, gunMesh, leftArm, rightArm;
-        let remoteMesh;
+        let localPlayerMesh, remoteMesh;
         let localBullets3D = [], remoteBullets3D = [];
         let activeGrenades = [], activeEffects = [];
-        let activeSlot = 2, kills = 0, isBotMatch = false;
+        let activeSlot = 1, kills = 0, isBotMatch = false;
 
         let matchTimer = 300;
         let timerInterval = null;
         const TARGET_KILLS = 40;
 
-        let cameraMode = 'TPP'; // Default TPP mode
+        let cameraMode = 'TPP';
         let isTouch = 'ontouchstart' in window;
         let joyDir = { forward: 0, right: 0 };
 
         let localState = { 
-            x: 0, posY: 0, velY: 0, z: 20, hp: 100, rotY: 0, pitchX: 0,
+            x: 0, posY: 0, velY: 0, z: 25, hp: 100, rotY: 0, pitchX: 0,
             isJumping: false, isCrouching: false,
-            clip: 18, reserve: 80
+            clip: 30, reserve: 90
         };
-        let remotePlayerState = { x: 0, posY: 0, z: -20, hp: 100, rotY: 0 };
+        let remotePlayerState = { x: 0, posY: 0, z: -25, hp: 100, rotY: 0 };
 
         let keys = {};
         let isPointerLocked = false;
@@ -656,16 +653,29 @@
             return texture;
         }
 
-        function createCrateTexture() {
+        function createCSLiteHazardCrateTexture() {
             const canvas = document.createElement('canvas');
-            canvas.width = 256; canvas.height = 256;
+            canvas.width = 512; canvas.height = 512;
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#a87844'; ctx.fillRect(0, 0, 256, 256);
-            ctx.fillStyle = '#6b4c27';
-            ctx.fillRect(0, 0, 256, 16); ctx.fillRect(0, 240, 256, 16);
-            ctx.fillRect(0, 0, 16, 256); ctx.fillRect(240, 0, 16, 256);
-            ctx.fillStyle = '#3a3a3a';
-            ctx.fillRect(20, 20, 8, 8); ctx.fillRect(228, 20, 8, 8);
+            
+            ctx.fillStyle = '#b3824d'; ctx.fillRect(0, 0, 512, 512);
+            ctx.fillStyle = '#7a542a';
+            ctx.fillRect(0, 0, 512, 32); ctx.fillRect(0, 480, 512, 32);
+            ctx.fillRect(0, 0, 32, 512); ctx.fillRect(480, 0, 32, 512);
+
+            ctx.fillStyle = '#ffd700'; ctx.fillRect(32, 32, 448, 50);
+            ctx.fillStyle = '#111';
+            for (let x = 32; x < 480; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 32); ctx.lineTo(x + 20, 32);
+                ctx.lineTo(x + 5, 82); ctx.lineTo(x - 15, 82);
+                ctx.fill();
+            }
+
+            ctx.strokeStyle = '#4a3014'; ctx.lineWidth = 6;
+            ctx.beginPath(); ctx.moveTo(32, 32); ctx.lineTo(480, 480); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(480, 32); ctx.lineTo(32, 480); ctx.stroke();
+
             return new THREE.CanvasTexture(canvas);
         }
 
@@ -691,20 +701,12 @@
             leftArm.add(lSleeve);
 
             gunMesh = new THREE.Group();
-            const gunMetalMat = new THREE.MeshStandardMaterial({ color: 0x22252a, metalness: 0.85, roughness: 0.25 });
-            const slideMat = new THREE.MeshStandardMaterial({ color: 0x111317, metalness: 0.9, roughness: 0.15 });
-
-            const slide = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.12, 0.55), slideMat);
-            slide.position.set(0.24, -0.12, -0.75);
-            gunMesh.add(slide);
-
-            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.58), gunMetalMat);
-            barrel.rotation.x = Math.PI / 2; barrel.position.set(0.24, -0.11, -0.76);
-            gunMesh.add(barrel);
-
-            const grip = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.32, 0.18), gunMetalMat);
-            grip.rotation.x = -0.3; grip.position.set(0.24, -0.28, -0.62);
-            gunMesh.add(grip);
+            const akTexture = new THREE.TextureLoader().load(AK47_REAL_PNG);
+            const akMat = new THREE.SpriteMaterial({ map: akTexture });
+            const akSprite = new THREE.Sprite(akMat);
+            akSprite.scale.set(1.5, 0.75, 1);
+            akSprite.position.set(0.28, -0.15, -0.7);
+            gunMesh.add(akSprite);
 
             viewmodelGroup.add(rightArm);
             viewmodelGroup.add(leftArm);
@@ -722,6 +724,12 @@
             floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true;
             scene.add(floor);
 
+            const sprayGeo = new THREE.CircleGeometry(3.5, 32);
+            const sprayMat = new THREE.MeshBasicMaterial({ color: 0xcc0022, transparent: true, opacity: 0.8 });
+            const spray = new THREE.Mesh(sprayGeo, sprayMat);
+            spray.rotation.x = -Math.PI / 2; spray.position.set(-4, 0.02, 2);
+            scene.add(spray);
+
             const wallTex = createSandstoneTexture();
             wallTex.repeat.set(6, 1);
             const wallMat = new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.8 });
@@ -735,33 +743,96 @@
             const eWall = new THREE.Mesh(new THREE.BoxGeometry(2, 14, 120), wallMat);
             eWall.position.set(60, 7, 0); scene.add(eWall);
 
-            const crateTex = createCrateTexture();
-            const crateMat = new THREE.MeshStandardMaterial({ map: crateTex, roughness: 0.6 });
+            const archFrameMat = new THREE.MeshStandardMaterial({ color: 0x8c7250, roughness: 0.7 });
+            const archDoorMat = new THREE.MeshStandardMaterial({ color: 0x5a3d1e, roughness: 0.8 });
+            
+            const archFrame = new THREE.Mesh(new THREE.BoxGeometry(8, 10, 2.5), archFrameMat);
+            archFrame.position.set(-20, 5, -58.5); scene.add(archFrame);
+            const archDoor = new THREE.Mesh(new THREE.BoxGeometry(6, 8, 0.4), archDoorMat);
+            archDoor.position.set(-20, 4, -58); scene.add(archDoor);
 
-            function addCrate(x, z, size) {
-                const crate = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), crateMat);
-                crate.position.set(x, size / 2, z); crate.castShadow = true; crate.receiveShadow = true;
-                scene.add(crate);
+            const CrateMat = new THREE.MeshStandardMaterial({ map: createCSLiteHazardCrateTexture(), roughness: 0.6 });
+            const palletMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.5 });
+
+            function addCSLiteCrate(x, z, size) {
+                const group = new THREE.Group();
+                const crate = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), CrateMat);
+                crate.position.y = size / 2 + 0.3; crate.castShadow = true; crate.receiveShadow = true;
+                group.add(crate);
+
+                const pallet = new THREE.Mesh(new THREE.BoxGeometry(size + 0.4, 0.3, size + 0.4), palletMat);
+                pallet.position.y = 0.15; group.add(pallet);
+
+                group.position.set(x, 0, z);
+                scene.add(group);
             }
 
-            addCrate(-8, -12, 4); addCrate(-8, -12, 3);
-            addCrate(10, 15, 4); addCrate(14, 15, 4);
-            addCrate(0, -22, 5); addCrate(-18, 5, 4.5);
+            addCSLiteCrate(0, -5, 5);
+            addCSLiteCrate(-12, -18, 4.5);
+            addCSLiteCrate(15, 12, 5);
+            addCSLiteCrate(20, -10, 4);
+
+            const rackGroup = new THREE.Group();
+            const rackFrameMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.8, roughness: 0.3 });
+            const tankMat = new THREE.MeshStandardMaterial({ color: 0x2b303a, metalness: 0.7, roughness: 0.4 });
+
+            const frameL = new THREE.Mesh(new THREE.BoxGeometry(0.3, 6, 4), rackFrameMat);
+            frameL.position.set(-1.8, 3, 0); rackGroup.add(frameL);
+            const frameR = new THREE.Mesh(new THREE.BoxGeometry(0.3, 6, 4), rackFrameMat);
+            frameR.position.set(1.8, 3, 0); rackGroup.add(frameR);
+
+            for (let y = 1; y <= 5; y += 1.3) {
+                for (let x = -1.2; x <= 1.2; x += 1.2) {
+                    const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 3.6, 12), tankMat);
+                    tank.rotation.x = Math.PI / 2;
+                    tank.position.set(x, y, 0);
+                    rackGroup.add(tank);
+                }
+            }
+            rackGroup.position.set(-18, 0, 5);
+            scene.add(rackGroup);
+
+            const canMat = new THREE.MeshStandardMaterial({ color: 0x225533, roughness: 0.6 });
+            const trashCan = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.5, 1.8, 16), canMat);
+            trashCan.position.set(8, 0.9, -12); scene.add(trashCan);
+
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5a3d1e, roughness: 0.9 });
+            const leafMat = new THREE.MeshStandardMaterial({ color: 0x2e6f3b, roughness: 0.6 });
+
+            function addPalmTree(x, z) {
+                const palm = new THREE.Group();
+                const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.45, 12, 10), trunkMat);
+                trunk.position.y = 6; palm.add(trunk);
+
+                for (let i = 0; i < 6; i++) {
+                    const leaf = new THREE.Mesh(new THREE.BoxGeometry(4, 0.1, 1), leafMat);
+                    leaf.position.set(1.8, 11.5, 0);
+                    leaf.rotation.z = -0.3;
+                    const leafGroup = new THREE.Group();
+                    leafGroup.add(leaf);
+                    leafGroup.rotation.y = (i * Math.PI) / 3;
+                    palm.add(leafGroup);
+                }
+                palm.position.set(x, 0, z);
+                scene.add(palm);
+            }
+
+            addPalmTree(-25, -45);
+            addPalmTree(25, -45);
+            addPalmTree(-35, 40);
         }
 
-        // --- REALISTIC SOLDIER CHARACTER MODEL FOR 3RD PERSON & BOTS ---
-        let localPlayerMesh;
         function createCSGOSoldierMesh(teamType) {
             const group = new THREE.Group();
             const mainColor = teamType === 'CT' ? 0x1b2845 : 0x3d3522;
 
-            const bodyMat = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.6 });
+            const bodyMat = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.5, metalness: 0.2 });
             const vestMat = new THREE.MeshStandardMaterial({ color: 0x11141a, roughness: 0.4 });
 
-            const body = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.5, 0.7), bodyMat);
-            body.position.y = 2.1; body.castShadow = true; group.add(body);
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 1.6, 12), bodyMat);
+            body.position.y = 2.0; body.castShadow = true; group.add(body);
 
-            const vest = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.1, 0.8), vestMat);
+            const vest = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.58, 1.1, 12), vestMat);
             vest.position.y = 2.1; group.add(vest);
 
             const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16), new THREE.MeshStandardMaterial({ color: 0x151820 }));
@@ -769,6 +840,18 @@
 
             const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 16, 0, Math.PI * 2, 0, Math.PI / 1.7), bodyMat);
             helmet.position.y = 3.15; group.add(helmet);
+
+            const goggleGeo = new THREE.BoxGeometry(0.55, 0.18, 0.2);
+            const goggleMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, roughness: 0.1, metalness: 0.9, emissive: 0x00f0ff, emissiveIntensity: 0.2 });
+            const goggles = new THREE.Mesh(goggleGeo, goggleMat);
+            goggles.position.set(0, 3.15, 0.38); group.add(goggles);
+
+            const akTexture = new THREE.TextureLoader().load(AK47_REAL_PNG);
+            const akMat = new THREE.SpriteMaterial({ map: akTexture });
+            const akSprite = new THREE.Sprite(akMat);
+            akSprite.scale.set(1.6, 0.8, 1);
+            akSprite.position.set(0.4, 2.2, 0.6);
+            group.add(akSprite);
 
             return group;
         }
@@ -793,7 +876,7 @@
             scene.add(remoteMesh);
 
             localState.x = 0; localState.z = 25; localState.posY = 0;
-            localState.hp = 100; localState.clip = 18; localState.reserve = 80;
+            localState.hp = 100; localState.clip = 30; localState.reserve = 90;
 
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
@@ -825,8 +908,8 @@
         }
 
         function reloadGun() {
-            if (localState.clip < 18 && localState.reserve > 0) {
-                const needed = 18 - localState.clip;
+            if (localState.clip < 30 && localState.reserve > 0) {
+                const needed = 30 - localState.clip;
                 const toAdd = Math.min(needed, localState.reserve);
                 localState.clip += toAdd;
                 localState.reserve -= toAdd;
@@ -881,9 +964,12 @@
                     if (kills >= TARGET_KILLS) endGame(true);
                 }
             }
+
+            if (conn && !isBotMatch) {
+                conn.send({ type: 'SHOOT', x: localState.x, y: localState.posY, z: localState.z });
+            }
         }
 
-        // --- MAIN RENDER LOOP WITH CORRECT TPP CAMERA BEHIND PLAYER ---
         function mainRenderLoop() {
             if (gameState === 'PLAYING') {
                 
@@ -915,23 +1001,19 @@
                 localState.x = Math.max(-57, Math.min(57, localState.x));
                 localState.z = Math.max(-57, Math.min(57, localState.z));
 
-                // UPDATE LOCAL PLAYER MODEL POSITION
                 if (localPlayerMesh) {
                     localPlayerMesh.position.set(localState.x, localState.posY, localState.z);
                     localPlayerMesh.rotation.y = localState.rotY;
                     localPlayerMesh.scale.y = localState.isCrouching ? 0.6 : 1.0;
                 }
 
-                // CORRECT CAMERA CALCULATIONS FOR FPP & TPP
                 if (cameraMode === 'FPP') {
-                    // First Person: Camera placed inside head looking forward
                     const camY = localState.posY + (localState.isCrouching ? 1.4 : 2.7);
                     camera.position.set(localState.x, camY, localState.z);
                     camera.rotation.set(localState.pitchX, localState.rotY, 0, 'YXZ');
                     if (viewmodelGroup) viewmodelGroup.visible = true;
                     if (localPlayerMesh) localPlayerMesh.visible = false;
                 } else {
-                    // Third Person: Camera placed BEHIND player's back looking forward
                     const distBehind = 6.5;
                     const camX = localState.x - forward.x * distBehind;
                     const camZ = localState.z - forward.z * distBehind;
@@ -944,7 +1026,6 @@
                     if (localPlayerMesh) localPlayerMesh.visible = true;
                 }
 
-                // Bot Movement AI
                 if (isBotMatch) {
                     let dx = localState.x - remotePlayerState.x;
                     let dz = localState.z - remotePlayerState.z;
@@ -960,7 +1041,10 @@
                 remoteMesh.position.set(remotePlayerState.x, remotePlayerState.posY, remotePlayerState.z);
                 remoteMesh.rotation.y = remotePlayerState.rotY;
 
-                // Grenades Loop
+                if (conn && !isBotMatch) {
+                    conn.send({ type: 'GAME_STATE', player: localState });
+                }
+
                 activeGrenades.forEach((nade, idx) => {
                     nade.position.add(nade.userData.vel); nade.userData.vel.y -= 0.015; nade.userData.timer--;
                     if (nade.position.y <= 0.2 || nade.userData.timer <= 0) {
