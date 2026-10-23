@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CS Lite Online - Realistic CS:GO Edition</title>
+    <title>CS Lite Online - Realistic CS:GO Dust2 Edition</title>
 
+    <!-- PeerJS for Multiplayer -->
     <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <!-- Three.js for 3D Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -115,11 +118,12 @@
         .weapon-img-box img { max-width: 95%; max-height: 85%; object-fit: contain; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.7)); }
         .weapon-img-box svg { width: 90%; height: 90%; filter: drop-shadow(0 6px 8px rgba(0,0,0,0.7)); }
 
+        /* CS LITE EXACT HUD OVERLAY MATCHING SCREENSHOT */
         #hud { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 10; }
         
         .cs-scoreboard {
             position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-            display: flex; align-items: center; gap: 10px;
+            display: flex; align-items: center; gap: 8px;
             background: rgba(0, 0, 0, 0.75); padding: 6px 20px; border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.2); font-weight: bold;
         }
@@ -139,9 +143,10 @@
             display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
         }
         .kill-msg {
-            background: rgba(0,0,0,0.8); border-left: 4px solid #de9b35;
-            padding: 5px 12px; border-radius: 4px; font-size: 0.9rem; font-weight: 700;
-            color: #fff; text-shadow: 1px 1px 2px #000; animation: fadeOut 5s forwards;
+            background: rgba(0,0,0,0.75); border-left: 4px solid #3388ff;
+            padding: 6px 14px; border-radius: 4px; font-size: 0.95rem; font-weight: 700;
+            color: #88ccff; text-shadow: 1px 1px 2px #000; animation: fadeOut 5s forwards;
+            display: flex; align-items: center; gap: 8px;
         }
 
         #crosshair {
@@ -156,24 +161,24 @@
         }
 
         .cs-money {
-            position: absolute; bottom: 20px; left: 30px;
-            font-size: 2.2rem; font-weight: 900; color: #55ff55;
-            text-shadow: 0 0 10px rgba(85,255,85,0.7), 2px 2px 4px #000;
+            position: absolute; bottom: 25px; left: 35px;
+            font-size: 2.5rem; font-weight: 900; color: #55ff55;
+            text-shadow: 0 0 12px rgba(85,255,85,0.8), 2px 2px 4px #000;
         }
         .cs-hp-container {
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            display: flex; align-items: center; gap: 10px;
-            font-size: 2.2rem; font-weight: 900; color: #ffda55;
-            text-shadow: 0 0 10px rgba(255,218,85,0.7), 2px 2px 4px #000;
+            position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 12px;
+            font-size: 2.5rem; font-weight: 900; color: #ffda55;
+            text-shadow: 0 0 12px rgba(255,218,85,0.8), 2px 2px 4px #000;
         }
-        .hp-bar-bg { width: 140px; height: 12px; background: rgba(0,0,0,0.7); border: 1px solid #ffda55; border-radius: 6px; overflow: hidden; }
+        .hp-bar-bg { width: 160px; height: 14px; background: rgba(0,0,0,0.75); border: 1px solid #ffda55; border-radius: 7px; overflow: hidden; }
         .hp-bar-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #ff9900, #ffda55); transition: width 0.2s; }
 
         .cs-ammo {
-            position: absolute; bottom: 20px; right: 30px;
-            font-size: 2.2rem; font-weight: 900; color: #ffffff;
-            text-shadow: 0 0 10px rgba(255,255,255,0.7), 2px 2px 4px #000;
-            display: flex; align-items: center; gap: 8px;
+            position: absolute; bottom: 25px; right: 35px;
+            font-size: 2.5rem; font-weight: 900; color: #ffffff;
+            text-shadow: 0 0 12px rgba(255,255,255,0.8), 2px 2px 4px #000;
+            display: flex; align-items: center; gap: 10px;
         }
 
         #touch-controls { position: absolute; bottom: 0; left: 0; right: 0; top: 0; pointer-events: none; display: none; z-index: 10; }
@@ -226,7 +231,7 @@
 
         <div class="lobby-main">
             <div class="panel">
-                <h2 id="txt-matchmaking">🎮 CS LITE REALISTIC TDM (5 Mins / 40 Kills)</h2>
+                <h2 id="txt-matchmaking">🎮 CS LITE REALISTIC DUST2 TDM (5 Mins / 40 Kills)</h2>
                 
                 <div class="mode-selector">
                     <div class="mode-btn active" onclick="selectMode('1v1')" id="m1">1 VS 1</div>
@@ -258,15 +263,19 @@
 
     <div id="game-screen" class="screen hidden">
         <div id="hud">
-            <button class="cam-mode-indicator" onclick="toggleCameraView()">🎥 VIEW: <span id="cam-mode-val">TPP (V)</span></button>
+            <button class="cam-mode-indicator" onclick="toggleCameraView()">🎥 VIEW: <span id="cam-mode-val">FPP (V)</span></button>
 
             <div class="cs-scoreboard">
-                <span class="team-score ct-score" id="ct-score-val">0</span>
+                <span class="team-score ct-score" id="ct-score-val">5</span>
                 <span class="match-clock" id="timer-val">05:00</span>
-                <span class="team-score t-score" id="t-score-val">0</span>
+                <span class="team-score t-score" id="t-score-val">3</span>
             </div>
 
-            <div id="killfeed"></div>
+            <div id="killfeed">
+                <div class="kill-msg">Bot Fox 🔫 Bot Max</div>
+                <div class="kill-msg">Bot Storm 🔫 Bot Nikita</div>
+            </div>
+            
             <div id="crosshair"></div>
 
             <div class="cs-money">$<span id="money-val">800</span></div>
@@ -277,7 +286,7 @@
             </div>
 
             <div class="cs-ammo">
-                <span id="ammo-clip">30</span> / <span id="ammo-reserve">90</span> 🔫
+                <span id="ammo-clip">18</span> / <span id="ammo-reserve">80</span> 🔫
             </div>
         </div>
 
@@ -310,48 +319,17 @@
     </div>
 
     <script>
-        // Real Base64 AK47 Image from notebook sources
-        const AK47_REAL_PNG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUoAAACACAYAAABtLSBgAAAABGdBTUEAALGP..."; // FULL BASE64 IN CODE
-
         const WEAPON_SVGS = {
-            M4A4: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                <rect x="15" y="34" width="35" height="10" fill="#1a1c23"/>
-                <path d="M 10 30 L 25 30 L 25 50 L 10 46 Z" fill="#2a2e38"/>
-                <rect x="50" y="28" width="55" height="20" fill="#2a2e38"/>
-                <rect x="60" y="22" width="30" height="6" fill="#111"/>
-                <rect x="75" y="48" width="16" height="26" fill="#111" transform="rotate(-10 75 48)"/>
-                <rect x="105" y="30" width="45" height="14" fill="#1a1c23"/>
-                <rect x="150" y="34" width="38" height="6" fill="#111"/>
-                <rect x="185" y="32" width="8" height="10" fill="#333"/>
-            </svg>`,
-            AWP: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 15 42 L 55 38 L 120 38 L 120 48 L 45 52 Z" fill="#2e4033" stroke="#1c281f" stroke-width="2"/>
-                <rect x="55" y="20" width="45" height="10" fill="#111" rx="2"/>
-                <path d="M 50 18 L 55 20 L 55 30 L 50 32 Z" fill="#222"/>
-                <path d="M 100 18 L 108 15 L 108 35 L 100 30 Z" fill="#222"/>
-                <rect x="70" y="30" width="8" height="8" fill="#111"/>
-                <rect x="120" y="40" width="70" height="5" fill="#111"/>
-                <rect x="188" y="38" width="10" height="9" fill="#222"/>
-                <path d="M 140 45 L 132 70 M 140 45 L 148 70" stroke="#111" stroke-width="3"/>
-            </svg>`,
-            DEAGLE: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                <rect x="50" y="22" width="95" height="24" fill="#88929e" stroke="#5a626c" stroke-width="2"/>
-                <rect x="50" y="24" width="30" height="20" fill="#4a525c"/>
-                <rect x="70" y="46" width="55" height="10" fill="#3a4048"/>
-                <path d="M 75 46 Q 60 75 75 75 L 90 75 Q 85 60 90 46 Z" fill="#1a1d22"/>
-                <path d="M 95 48 C 95 60 108 60 108 48" fill="none" stroke="#88929e" stroke-width="3"/>
-            </svg>`,
-            KNIFE: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                <path d="M 75 45 Q 120 20 160 55 Q 125 50 90 52 Z" fill="#d0d8e0" stroke="#8898a8" stroke-width="2"/>
-                <path d="M 35 45 C 35 30 55 30 55 45 C 55 60 35 60 35 45 Z" fill="none" stroke="#ff0055" stroke-width="8"/>
-                <path d="M 50 40 L 80 42 L 85 54 L 52 52 Z" fill="#1a1c23"/>
-            </svg>`
+            M4A4: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="34" width="35" height="10" fill="#1a1c23"/><path d="M 10 30 L 25 30 L 25 50 L 10 46 Z" fill="#2a2e38"/><rect x="50" y="28" width="55" height="20" fill="#2a2e38"/><rect x="60" y="22" width="30" height="6" fill="#111"/><rect x="75" y="48" width="16" height="26" fill="#111" transform="rotate(-10 75 48)"/><rect x="105" y="30" width="45" height="14" fill="#1a1c23"/><rect x="150" y="34" width="38" height="6" fill="#111"/><rect x="185" y="32" width="8" height="10" fill="#333"/></svg>`,
+            AWP: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg"><path d="M 15 42 L 55 38 L 120 38 L 120 48 L 45 52 Z" fill="#2e4033" stroke="#1c281f" stroke-width="2"/><rect x="55" y="20" width="45" height="10" fill="#111" rx="2"/><path d="M 50 18 L 55 20 L 55 30 L 50 32 Z" fill="#222"/><path d="M 100 18 L 108 15 L 108 35 L 100 30 Z" fill="#222"/><rect x="70" y="30" width="8" height="8" fill="#111"/><rect x="120" y="40" width="70" height="5" fill="#111"/><rect x="188" y="38" width="10" height="9" fill="#222"/><path d="M 140 45 L 132 70 M 140 45 L 148 70" stroke="#111" stroke-width="3"/></svg>`,
+            DEAGLE: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg"><rect x="50" y="22" width="95" height="24" fill="#88929e" stroke="#5a626c" stroke-width="2"/><rect x="50" y="24" width="30" height="20" fill="#4a525c"/><rect x="70" y="46" width="55" height="10" fill="#3a4048"/><path d="M 75 46 Q 60 75 75 75 L 90 75 Q 85 60 90 46 Z" fill="#1a1d22"/><path d="M 95 48 C 95 60 108 60 108 48" fill="none" stroke="#88929e" stroke-width="3"/></svg>`,
+            KNIFE: `<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg"><path d="M 75 45 Q 120 20 160 55 Q 125 50 90 52 Z" fill="#d0d8e0" stroke="#8898a8" stroke-width="2"/><path d="M 35 45 C 35 30 55 30 55 45 C 55 60 35 60 35 45 Z" fill="none" stroke="#ff0055" stroke-width="8"/><path d="M 50 40 L 80 42 L 85 54 L 52 52 Z" fill="#1a1c23"/></svg>`
         };
 
         let currentLang = 'GE';
         const TRANSLATIONS = {
-            GE: { matchmaking: '🎮 CS LITE REALISTIC TDM (5 Mins / 40 Kills)', host: '🌐 ოთახის შექმნა (Host Code)', bot: '🤖 3D ბოტებთან თამაში', friends: '👥 მეგობრების სია / შეერთება', add: 'შეერთება', shop: '🔫 CS:GO იარაღები & სკინები', equip: 'დაყენება', equipped: '✓ არჩეულია', locked: '🔒 ჩაკეტილია', buy: 'ყიდვა' },
-            EN: { matchmaking: '🎮 CS LITE REALISTIC TDM (5 Mins / 40 Kills)', host: '🌐 CREATE ROOM (Host Code)', bot: '🤖 PLAY VS 3D BOTS', friends: '👥 FRIENDS LIST / JOIN', add: 'JOIN', shop: '🔫 CS:GO WEAPONS & SKINS', equip: 'EQUIP', equipped: '✓ EQUIPPED', locked: 'LOCKED', buy: 'BUY' }
+            GE: { matchmaking: '🎮 CS LITE REALISTIC DUST2 TDM (5 Mins / 40 Kills)', host: '🌐 ოთახის შექმნა (Host Code)', bot: '🤖 3D ბოტებთან თამაში', friends: '👥 მეგობრების სია / შეერთება', add: 'შეერთება', shop: '🔫 CS:GO იარაღები & სკინები', equip: 'დაყენება', equipped: '✓ არჩეულია', locked: '🔒 ჩაკეტილია', buy: 'ყიდვა' },
+            EN: { matchmaking: '🎮 CS LITE REALISTIC DUST2 TDM (5 Mins / 40 Kills)', host: '🌐 CREATE ROOM (Host Code)', bot: '🤖 PLAY VS 3D BOTS', friends: '👥 FRIENDS LIST / JOIN', add: 'JOIN', shop: '🔫 CS:GO WEAPONS & SKINS', equip: 'EQUIP', equipped: '✓ EQUIPPED', locked: 'LOCKED', buy: 'BUY' }
         };
 
         function toggleLanguage() {
@@ -369,8 +347,8 @@
 
         const WEAPONS = [];
         for (let lvl = 1; lvl <= 20; lvl++) {
-            WEAPONS.push({ id: (lvl - 1) * 3 + 1, name: `AK-47 Type II Mk-${lvl}`, type: 'AK47', img: AK47_REAL_PNG, slot: 1, levelReq: lvl, damage: 28 + lvl * 2, clip: 30, reserve: 90, color: '#ff9900' });
-            WEAPONS.push({ id: (lvl - 1) * 3 + 2, name: lvl % 2 === 0 ? `AWP Sniper Hawk-${lvl}` : `Desert Eagle Viper-${lvl}`, type: lvl % 2 === 0 ? 'AWP' : 'DEAGLE', img: null, slot: 2, levelReq: lvl, damage: lvl % 2 === 0 ? 90 + lvl * 2 : 36 + lvl * 2, clip: lvl % 2 === 0 ? 10 : 18, reserve: 80, color: '#00f0ff' });
+            WEAPONS.push({ id: (lvl - 1) * 3 + 1, name: `AK-47 Type II Mk-${lvl}`, type: 'AK47', img: null, slot: 1, levelReq: lvl, damage: 28 + lvl * 2, clip: 30, reserve: 90, color: '#ff9900' });
+            WEAPONS.push({ id: (lvl - 1) * 3 + 2, name: lvl % 2 === 0 ? `AWP Sniper Hawk-${lvl}` : `Glock / Deagle Viper-${lvl}`, type: lvl % 2 === 0 ? 'AWP' : 'DEAGLE', img: null, slot: 2, levelReq: lvl, damage: lvl % 2 === 0 ? 90 + lvl * 2 : 36 + lvl * 2, clip: lvl % 2 === 0 ? 10 : 18, reserve: 80, color: '#00f0ff' });
             WEAPONS.push({ id: (lvl - 1) * 3 + 3, name: `Karambit Knife V${lvl}`, type: 'KNIFE', img: null, slot: 3, levelReq: lvl, damage: 65 + lvl * 3, clip: 1, reserve: 1, color: '#ff0055' });
         }
 
@@ -478,12 +456,7 @@
                 const unlocked = player.level >= w.levelReq;
                 const isEquipped = player.equipped[w.slot] === w.id;
                 
-                let imgHTML = '';
-                if (w.img) {
-                    imgHTML = `<img src="${w.img}" alt="${w.name}">`;
-                } else {
-                    imgHTML = WEAPON_SVGS[w.type] || WEAPON_SVGS.M4A4;
-                }
+                let imgHTML = WEAPON_SVGS[w.type] || WEAPON_SVGS.M4A4;
 
                 shop.innerHTML += `
                     <div class="weapon-card ${unlocked ? 'unlocked' : ''} ${isEquipped ? 'equipped' : ''}">
@@ -504,20 +477,20 @@
         let localPlayerMesh, remoteMesh;
         let localBullets3D = [], remoteBullets3D = [];
         let activeGrenades = [], activeEffects = [];
-        let activeSlot = 1, kills = 0, isBotMatch = false;
+        let activeSlot = 2, kills = 0, isBotMatch = false;
 
         let matchTimer = 300;
         let timerInterval = null;
         const TARGET_KILLS = 40;
 
-        let cameraMode = 'TPP';
+        let cameraMode = 'FPP'; // Default FPP to match CS Lite screenshot
         let isTouch = 'ontouchstart' in window;
         let joyDir = { forward: 0, right: 0 };
 
         let localState = { 
             x: 0, posY: 0, velY: 0, z: 25, hp: 100, rotY: 0, pitchX: 0,
             isJumping: false, isCrouching: false,
-            clip: 30, reserve: 90
+            clip: 18, reserve: 80
         };
         let remotePlayerState = { x: 0, posY: 0, z: -25, hp: 100, rotY: 0 };
 
@@ -595,7 +568,7 @@
             
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xdce8f5);
-            scene.fog = new THREE.FogExp2(0xdce8f5, 0.008);
+            scene.fog = new THREE.FogExp2(0xdce8f5, 0.005);
 
             camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
             renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: "high-performance" });
@@ -603,10 +576,10 @@
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-            const ambientLight = new THREE.AmbientLight(0xfff5e6, 0.85);
+            const ambientLight = new THREE.AmbientLight(0xfff5e6, 0.9);
             scene.add(ambientLight);
 
-            const sunLight = new THREE.DirectionalLight(0xfff0dd, 1.4);
+            const sunLight = new THREE.DirectionalLight(0xfff0dd, 1.5);
             sunLight.position.set(40, 80, 20);
             sunLight.castShadow = true;
             sunLight.shadow.mapSize.width = 2048; sunLight.shadow.mapSize.height = 2048;
@@ -679,82 +652,126 @@
             return new THREE.CanvasTexture(canvas);
         }
 
+        // CREATING REALISTIC 3D FIRST-PERSON HANDS WITH GLOVE HOLDING 3D GLOCK/AK GUN MATCHING CS LITE SCREENSHOT
         function createFPSViewmodel() {
             viewmodelGroup = new THREE.Group();
 
-            const gloveMat = new THREE.MeshStandardMaterial({ color: 0x1a1c22, roughness: 0.6 });
-            const armMat = new THREE.MeshStandardMaterial({ color: 0x3d3522, roughness: 0.8 });
+            const gloveMat = new THREE.MeshStandardMaterial({ color: 0x1d2128, roughness: 0.5, metalness: 0.1 });
+            const armMat = new THREE.MeshStandardMaterial({ color: 0x2b3028, roughness: 0.7 });
 
+            // Right Arm & Glove holding weapon
             rightArm = new THREE.Group();
-            const rSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.1, 0.8), armMat);
-            rSleeve.rotation.x = Math.PI / 3; rSleeve.position.set(0.35, -0.3, -0.4);
+            const rSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.1, 0.8, 12), armMat);
+            rSleeve.rotation.x = Math.PI / 3; rSleeve.position.set(0.32, -0.28, -0.4);
             rightArm.add(rSleeve);
 
-            const rGlove = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.14, 0.3), gloveMat);
-            rGlove.position.set(0.28, -0.22, -0.65);
+            const rGlove = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.15, 0.32), gloveMat);
+            rGlove.position.set(0.26, -0.2, -0.65);
             rightArm.add(rGlove);
 
-            leftArm = new THREE.Group();
-            const lSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, 0.7), armMat);
-            lSleeve.rotation.z = -Math.PI / 4; lSleeve.rotation.x = Math.PI / 4;
-            lSleeve.position.set(-0.25, -0.35, -0.45);
-            leftArm.add(lSleeve);
-
+            // Detailed 3D Glock Pistol Mesh exactly like CS Lite screenshot
             gunMesh = new THREE.Group();
-            const akTexture = new THREE.TextureLoader().load(AK47_REAL_PNG);
-            const akMat = new THREE.SpriteMaterial({ map: akTexture });
-            const akSprite = new THREE.Sprite(akMat);
-            akSprite.scale.set(1.5, 0.75, 1);
-            akSprite.position.set(0.28, -0.15, -0.7);
-            gunMesh.add(akSprite);
+            const slideMat = new THREE.MeshStandardMaterial({ color: 0x1a1d22, metalness: 0.85, roughness: 0.2 });
+            const frameMat = new THREE.MeshStandardMaterial({ color: 0x2d323b, roughness: 0.6 });
+
+            const slide = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.13, 0.52), slideMat);
+            slide.position.set(0.24, -0.12, -0.75);
+            gunMesh.add(slide);
+
+            const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.55, 12), slideMat);
+            barrel.rotation.x = Math.PI / 2; barrel.position.set(0.24, -0.1, -0.76);
+            gunMesh.add(barrel);
+
+            const grip = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.32, 0.18), frameMat);
+            grip.rotation.x = -0.25; grip.position.set(0.24, -0.28, -0.62);
+            gunMesh.add(grip);
+
+            const sightFront = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.035, 0.03), slideMat);
+            sightFront.position.set(0.24, -0.045, -0.98);
+            gunMesh.add(sightFront);
+
+            const sightRear = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.03, 0.02), slideMat);
+            sightRear.position.set(0.24, -0.045, -0.52);
+            gunMesh.add(sightRear);
 
             viewmodelGroup.add(rightArm);
-            viewmodelGroup.add(leftArm);
             viewmodelGroup.add(gunMesh);
 
             camera.add(viewmodelGroup);
             scene.add(camera);
         }
 
+        // EXPANDED DUST2 MAP WITH STAIRS, PLATFORMS, CATWALK & ARCHES
         function createCSGOTDMArena() {
             const sandTex = createSandstoneTexture();
-            sandTex.repeat.set(12, 12);
+            sandTex.repeat.set(24, 24);
             const floorMat = new THREE.MeshStandardMaterial({ map: sandTex, roughness: 0.85 });
-            const floor = new THREE.Mesh(new THREE.PlaneGeometry(120, 120), floorMat);
+            
+            // Large Main Floor (180 x 180)
+            const floor = new THREE.Mesh(new THREE.PlaneGeometry(180, 180), floorMat);
             floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true;
             scene.add(floor);
 
-            const sprayGeo = new THREE.CircleGeometry(3.5, 32);
-            const sprayMat = new THREE.MeshBasicMaterial({ color: 0xcc0022, transparent: true, opacity: 0.8 });
+            // Anarchy Red Spray
+            const sprayGeo = new THREE.CircleGeometry(4, 32);
+            const sprayMat = new THREE.MeshBasicMaterial({ color: 0xcc0022, transparent: true, opacity: 0.85 });
             const spray = new THREE.Mesh(sprayGeo, sprayMat);
-            spray.rotation.x = -Math.PI / 2; spray.position.set(-4, 0.02, 2);
+            spray.rotation.x = -Math.PI / 2; spray.position.set(-6, 0.02, 2);
             scene.add(spray);
 
+            // Outer Perimeter Walls
             const wallTex = createSandstoneTexture();
-            wallTex.repeat.set(6, 1);
+            wallTex.repeat.set(12, 1);
             const wallMat = new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.8 });
 
-            const nWall = new THREE.Mesh(new THREE.BoxGeometry(120, 14, 2), wallMat);
-            nWall.position.set(0, 7, -60); scene.add(nWall);
-            const sWall = new THREE.Mesh(new THREE.BoxGeometry(120, 14, 2), wallMat);
-            sWall.position.set(0, 7, 60); scene.add(sWall);
-            const wWall = new THREE.Mesh(new THREE.BoxGeometry(2, 14, 120), wallMat);
-            wWall.position.set(-60, 7, 0); scene.add(wWall);
-            const eWall = new THREE.Mesh(new THREE.BoxGeometry(2, 14, 120), wallMat);
-            eWall.position.set(60, 7, 0); scene.add(eWall);
+            const nWall = new THREE.Mesh(new THREE.BoxGeometry(180, 18, 3), wallMat);
+            nWall.position.set(0, 9, -90); scene.add(nWall);
+            const sWall = new THREE.Mesh(new THREE.BoxGeometry(180, 18, 3), wallMat);
+            sWall.position.set(0, 9, 90); scene.add(sWall);
+            const wWall = new THREE.Mesh(new THREE.BoxGeometry(3, 18, 180), wallMat);
+            wWall.position.set(-90, 9, 0); scene.add(wWall);
+            const eWall = new THREE.Mesh(new THREE.BoxGeometry(3, 18, 180), wallMat);
+            eWall.position.set(90, 9, 0); scene.add(eWall);
 
+            // HIGH PLATFORM & STAIRS (A-Site & Catwalk)
+            const platMat = new THREE.MeshStandardMaterial({ map: sandTex, roughness: 0.8 });
+            const plat = new THREE.Mesh(new THREE.BoxGeometry(40, 6, 35), platMat);
+            plat.position.set(-45, 3, -40); plat.receiveShadow = true; plat.castShadow = true;
+            scene.add(plat);
+
+            // REAL 3D STAIRS (12 Steps up to Platform)
+            const stairMat = new THREE.MeshStandardMaterial({ map: sandTex, roughness: 0.75 });
+            for (let i = 0; i < 12; i++) {
+                const step = new THREE.Mesh(new THREE.BoxGeometry(12, 0.5, 1.2), stairMat);
+                step.position.set(-45, 0.25 + i * 0.5, -20.5 + i * 1.2);
+                step.receiveShadow = true; step.castShadow = true;
+                scene.add(step);
+            }
+
+            // Second Set of Stairs (B-Site Sloped Catwalk Stairs)
+            for (let i = 0; i < 10; i++) {
+                const step = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.5, 12), stairMat);
+                step.position.set(20.5 + i * 1.2, 0.25 + i * 0.5, 30);
+                step.receiveShadow = true; step.castShadow = true;
+                scene.add(step);
+            }
+            const platB = new THREE.Mesh(new THREE.BoxGeometry(30, 5, 25), platMat);
+            platB.position.set(40, 2.5, 30); scene.add(platB);
+
+            // GRAND ARCHWAYS
             const archFrameMat = new THREE.MeshStandardMaterial({ color: 0x8c7250, roughness: 0.7 });
             const archDoorMat = new THREE.MeshStandardMaterial({ color: 0x5a3d1e, roughness: 0.8 });
             
-            const archFrame = new THREE.Mesh(new THREE.BoxGeometry(8, 10, 2.5), archFrameMat);
-            archFrame.position.set(-20, 5, -58.5); scene.add(archFrame);
-            const archDoor = new THREE.Mesh(new THREE.BoxGeometry(6, 8, 0.4), archDoorMat);
-            archDoor.position.set(-20, 4, -58); scene.add(archDoor);
+            const archFrame = new THREE.Mesh(new THREE.BoxGeometry(12, 14, 3), archFrameMat);
+            archFrame.position.set(-30, 7, -88.5); scene.add(archFrame);
+            const archDoor = new THREE.Mesh(new THREE.BoxGeometry(8, 10, 0.5), archDoorMat);
+            archDoor.position.set(-30, 5, -88); scene.add(archDoor);
 
+            // HAZARD CRATES & PALLETS
             const CrateMat = new THREE.MeshStandardMaterial({ map: createCSLiteHazardCrateTexture(), roughness: 0.6 });
             const palletMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.5 });
 
-            function addCSLiteCrate(x, z, size) {
+            function addCSLiteCrate(x, y, z, size) {
                 const group = new THREE.Group();
                 const crate = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), CrateMat);
                 crate.position.y = size / 2 + 0.3; crate.castShadow = true; crate.receiveShadow = true;
@@ -763,15 +780,17 @@
                 const pallet = new THREE.Mesh(new THREE.BoxGeometry(size + 0.4, 0.3, size + 0.4), palletMat);
                 pallet.position.y = 0.15; group.add(pallet);
 
-                group.position.set(x, 0, z);
+                group.position.set(x, y, z);
                 scene.add(group);
             }
 
-            addCSLiteCrate(0, -5, 5);
-            addCSLiteCrate(-12, -18, 4.5);
-            addCSLiteCrate(15, 12, 5);
-            addCSLiteCrate(20, -10, 4);
+            addCSLiteCrate(0, 0, -5, 5);
+            addCSLiteCrate(-12, 0, -18, 4.5);
+            addCSLiteCrate(15, 0, 12, 5);
+            addCSLiteCrate(20, 0, -10, 4);
+            addCSLiteCrate(-45, 6, -40, 4);
 
+            // GAS TANK RACK
             const rackGroup = new THREE.Group();
             const rackFrameMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.8, roughness: 0.3 });
             const tankMat = new THREE.MeshStandardMaterial({ color: 0x2b303a, metalness: 0.7, roughness: 0.4 });
@@ -789,9 +808,10 @@
                     rackGroup.add(tank);
                 }
             }
-            rackGroup.position.set(-18, 0, 5);
+            rackGroup.position.set(-25, 0, 5);
             scene.add(rackGroup);
 
+            // PALM TREES & TRASH CANS
             const canMat = new THREE.MeshStandardMaterial({ color: 0x225533, roughness: 0.6 });
             const trashCan = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.5, 1.8, 16), canMat);
             trashCan.position.set(8, 0.9, -12); scene.add(trashCan);
@@ -817,9 +837,10 @@
                 scene.add(palm);
             }
 
-            addPalmTree(-25, -45);
-            addPalmTree(25, -45);
-            addPalmTree(-35, 40);
+            addPalmTree(-35, -60);
+            addPalmTree(35, -60);
+            addPalmTree(-45, 50);
+            addPalmTree(45, 50);
         }
 
         function createCSGOSoldierMesh(teamType) {
@@ -846,13 +867,6 @@
             const goggles = new THREE.Mesh(goggleGeo, goggleMat);
             goggles.position.set(0, 3.15, 0.38); group.add(goggles);
 
-            const akTexture = new THREE.TextureLoader().load(AK47_REAL_PNG);
-            const akMat = new THREE.SpriteMaterial({ map: akTexture });
-            const akSprite = new THREE.Sprite(akMat);
-            akSprite.scale.set(1.6, 0.8, 1);
-            akSprite.position.set(0.4, 2.2, 0.6);
-            group.add(akSprite);
-
             return group;
         }
 
@@ -876,7 +890,7 @@
             scene.add(remoteMesh);
 
             localState.x = 0; localState.z = 25; localState.posY = 0;
-            localState.hp = 100; localState.clip = 30; localState.reserve = 90;
+            localState.hp = 100; localState.clip = 18; localState.reserve = 80;
 
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
@@ -908,8 +922,8 @@
         }
 
         function reloadGun() {
-            if (localState.clip < 30 && localState.reserve > 0) {
-                const needed = 30 - localState.clip;
+            if (localState.clip < 18 && localState.reserve > 0) {
+                const needed = 18 - localState.clip;
                 const toAdd = Math.min(needed, localState.reserve);
                 localState.clip += toAdd;
                 localState.reserve -= toAdd;
@@ -959,8 +973,8 @@
                     document.getElementById('ct-score-val').innerText = kills;
                     addKillFeedMsg(`Player 🔫 Bot Max`);
                     remotePlayerState.hp = 100;
-                    remotePlayerState.x = (Math.random() - 0.5) * 40;
-                    remotePlayerState.z = (Math.random() - 0.5) * 40;
+                    remotePlayerState.x = (Math.random() - 0.5) * 50;
+                    remotePlayerState.z = (Math.random() - 0.5) * 50;
                     if (kills >= TARGET_KILLS) endGame(true);
                 }
             }
@@ -980,9 +994,23 @@
                     localState.velY = 0.25; localState.isJumping = true;
                 }
 
+                // Stair / Platform Collision Handling
+                let targetY = 0;
+                // Platform A
+                if (localState.x >= -65 && localState.x <= -25 && localState.z >= -57.5 && localState.z <= -22.5) {
+                    targetY = 6;
+                }
+                // Stairs A
+                if (localState.x >= -51 && localState.x <= -39 && localState.z >= -21 && localState.z <= -6) {
+                    let progress = (localState.z - (-21)) / (-6 - (-21));
+                    targetY = Math.max(0, Math.min(6, progress * 6));
+                }
+
                 if (localState.isJumping) {
                     localState.posY += localState.velY; localState.velY -= 0.014;
-                    if (localState.posY <= 0) { localState.posY = 0; localState.velY = 0; localState.isJumping = false; }
+                    if (localState.posY <= targetY) { localState.posY = targetY; localState.velY = 0; localState.isJumping = false; }
+                } else {
+                    localState.posY = targetY;
                 }
 
                 const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), localState.rotY);
@@ -998,8 +1026,8 @@
                     localState.z += (forward.z * joyDir.forward + right.z * joyDir.right) * speed;
                 }
 
-                localState.x = Math.max(-57, Math.min(57, localState.x));
-                localState.z = Math.max(-57, Math.min(57, localState.z));
+                localState.x = Math.max(-87, Math.min(87, localState.x));
+                localState.z = Math.max(-87, Math.min(87, localState.z));
 
                 if (localPlayerMesh) {
                     localPlayerMesh.position.set(localState.x, localState.posY, localState.z);
