@@ -290,7 +290,7 @@
             </div>
 
             <div class="panel">
-                <h2 id="txt-shop">📦 CS 3D GLB მოდელების არსენალი (player.glb Support)</h2>
+                <h2 id="txt-shop">📦 CS 3D GLB მოდელების არსენალი</h2>
                 <div id="weapon-shop-container" class="weapon-grid"></div>
             </div>
         </div>
@@ -538,6 +538,22 @@
         let isPointerLocked = false;
         const gltfLoader = new THREE.GLTFLoader();
 
+        // Smart GLB loader that tries .glb, then .glb.glb
+        function loadGLBSmart(filename, onSuccess, onError) {
+            let altFilename = filename.endsWith('.glb') ? filename + '.glb' : filename;
+            if (filename.endsWith('.glb.glb')) altFilename = filename.replace('.glb.glb', '.glb');
+
+            gltfLoader.load(filename, (gltf) => {
+                onSuccess(gltf);
+            }, undefined, (err1) => {
+                gltfLoader.load(altFilename, (gltf2) => {
+                    onSuccess(gltf2);
+                }, undefined, (err2) => {
+                    if (onError) onError(err2);
+                });
+            });
+        }
+
         function toggleCameraView() {
             cameraMode = cameraMode === 'TPP' ? 'FPP' : 'TPP';
             document.getElementById('cam-mode-val').innerText = `${cameraMode} (V)`;
@@ -726,12 +742,12 @@
                 current3DWeaponMesh = null;
             }
 
-            gltfLoader.load(weaponObj.modelFile, (gltf) => {
+            loadGLBSmart(weaponObj.modelFile, (gltf) => {
                 current3DWeaponMesh = gltf.scene;
                 current3DWeaponMesh.scale.set(0.5, 0.5, 0.5);
                 current3DWeaponMesh.position.set(0.24, -0.2, -0.65);
                 viewmodelGroup.add(current3DWeaponMesh);
-            }, undefined, (err) => {
+            }, (err) => {
                 const meshGroup = new THREE.Group();
                 const mat = new THREE.MeshStandardMaterial({ color: 0x1a1d22, metalness: 0.8, roughness: 0.2 });
                 const slide = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.14, 0.6), mat);
@@ -786,11 +802,11 @@
         }
 
         function createCSGOTDMArena() {
-            gltfLoader.load('dust2.glb', (gltf) => {
+            loadGLBSmart('dust2.glb', (gltf) => {
                 const mapScene = gltf.scene;
                 mapScene.scale.set(1, 1, 1);
                 scene.add(mapScene);
-            }, undefined, () => {
+            }, () => {
                 const sandTex = createSandstoneTexture();
                 sandTex.repeat.set(24, 24);
                 const floorMat = new THREE.MeshStandardMaterial({ map: sandTex, roughness: 0.85 });
@@ -852,40 +868,48 @@
             });
         }
 
-        // Creates CS Player soldier mesh either from 'player.glb' or fallback procedural soldier mesh
+        // Creates CS Player soldier mesh: tries team file (ct.glb / t.glb), then player.glb, then procedural
         function createCSGOSoldierMesh(teamType) {
             const group = new THREE.Group();
+            const primaryModel = teamType === 'CT' ? 'ct.glb' : 't.glb';
 
-            // Try loading 3D player model 'player.glb'
-            gltfLoader.load('player.glb', (gltf) => {
+            loadGLBSmart(primaryModel, (gltf) => {
                 const model = gltf.scene;
                 model.scale.set(0.018, 0.018, 0.018);
                 model.position.y = 0;
                 model.traverse(c => { if(c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
                 group.add(model);
-            }, undefined, () => {
-                // Procedural Tactical CS Soldier Mesh Fallback
-                const mainColor = teamType === 'CT' ? 0x1b2845 : 0x3d3522;
+            }, () => {
+                loadGLBSmart('player.glb', (gltf2) => {
+                    const model2 = gltf2.scene;
+                    model2.scale.set(0.018, 0.018, 0.018);
+                    model2.position.y = 0;
+                    model2.traverse(c => { if(c.isMesh) { c.castShadow = true; c.receiveShadow = true; } });
+                    group.add(model2);
+                }, () => {
+                    // Procedural Tactical CS Soldier Mesh Fallback
+                    const mainColor = teamType === 'CT' ? 0x1b2845 : 0x3d3522;
 
-                const bodyMat = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.5, metalness: 0.2 });
-                const vestMat = new THREE.MeshStandardMaterial({ color: 0x11141a, roughness: 0.4 });
+                    const bodyMat = new THREE.MeshStandardMaterial({ color: mainColor, roughness: 0.5, metalness: 0.2 });
+                    const vestMat = new THREE.MeshStandardMaterial({ color: 0x11141a, roughness: 0.4 });
 
-                const body = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 1.6, 12), bodyMat);
-                body.position.y = 2.0; body.castShadow = true; group.add(body);
+                    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 1.6, 12), bodyMat);
+                    body.position.y = 2.0; body.castShadow = true; group.add(body);
 
-                const vest = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.58, 1.1, 12), vestMat);
-                vest.position.y = 2.1; group.add(vest);
+                    const vest = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.58, 1.1, 12), vestMat);
+                    vest.position.y = 2.1; group.add(vest);
 
-                const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16), new THREE.MeshStandardMaterial({ color: 0x151820 }));
-                head.position.y = 3.1; group.add(head);
+                    const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16), new THREE.MeshStandardMaterial({ color: 0x151820 }));
+                    head.position.y = 3.1; group.add(head);
 
-                const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 16, 0, Math.PI * 2, 0, Math.PI / 1.7), bodyMat);
-                helmet.position.y = 3.15; group.add(helmet);
+                    const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 16, 0, Math.PI * 2, 0, Math.PI / 1.7), bodyMat);
+                    helmet.position.y = 3.15; group.add(helmet);
 
-                const goggleGeo = new THREE.BoxGeometry(0.55, 0.18, 0.2);
-                const goggleMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, roughness: 0.1, metalness: 0.9, emissive: 0x00f0ff, emissiveIntensity: 0.2 });
-                const goggles = new THREE.Mesh(goggleGeo, goggleMat);
-                goggles.position.set(0, 3.15, 0.38); group.add(goggles);
+                    const goggleGeo = new THREE.BoxGeometry(0.55, 0.18, 0.2);
+                    const goggleMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, roughness: 0.1, metalness: 0.9, emissive: 0x00f0ff, emissiveIntensity: 0.2 });
+                    const goggles = new THREE.Mesh(goggleGeo, goggleMat);
+                    goggles.position.set(0, 3.15, 0.38); group.add(goggles);
+                });
             });
 
             return group;
